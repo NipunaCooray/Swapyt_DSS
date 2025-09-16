@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Paediatric Splenic Trauma — Decision Support (Expanded Flow)</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body { background:#fafbfe; color:#141a28; }
+    .app { max-width:1000px; margin: 24px auto; }
+    .badge-dst { background:#e8f0ff; color:#0a56d0; border:1px solid #cfe0ff; font-weight:700; }
+    .header-card { background:#fff; border:1px solid #e6e8ee; border-radius:16px; padding:16px; }
+    .card-step { background:#fff; border:1px solid #e6e8ee; border-radius:16px; margin-bottom:1rem; }
+    .alert-instruction { background:#eef3ff; border:1px solid #dbe6ff; }
+    .link-chip { border:1px solid #d2ddff; background:#f0f4ff; color:#1140a6; padding:.35rem .6rem; border-radius:999px; text-decoration:none; font-weight:600; display:inline-block; margin-right:0.25rem; }
+    .sidebar-card { background:#fff; border:1px solid #e6e8ee; border-radius:16px; }
+    .muted { color:#5c6b82; }
+    .btn-primary { background:#0a66ff; border-color:#0a66ff;}
+    .btn-outline-primary { border-color:#0a66ff; color:#0a66ff;}
+    .btn-outline-primary:hover { background:#0a66ff; color:#fff; }
+    .popup-link { color:#0a66ff; cursor:pointer; font-weight:600; }
+    .popup-link:hover { text-decoration:underline; }
+    /* Decision points use a distinct non-blue background per your earlier request */
+    .decision-callout { background:#fff6e5; border:1px solid #ffe1a8; border-left:6px solid #ff9f1c; border-radius:12px; padding:12px 14px; }
+    .decision-callout .title { font-weight:700; }
+    .decision-callout .hint { color:#7a5a32; font-size:.9rem; }
+  </style>
+</head>
+<body>
+  <div class="app container-fluid">
+    <div class="header-card mb-3 d-flex justify-content-between align-items-center flex-wrap gap-2">
+      <div class="d-flex align-items-center gap-3">
+        <span class="badge badge-dst rounded-pill px-3 py-2">DST</span>
+        <div>
+          <h1 class="h4 mb-0">Paediatric Splenic Trauma — Decision Support</h1>
+          <div class="muted">Prototype with added sections & decision points</div>
+        </div>
+      </div>
+      <button id="btn-reset" class="btn btn-outline-secondary btn-sm">Reset</button>
+    </div>
+
+    <div class="row g-3">
+      <div class="col-lg-8">
+        <div id="step-container"></div>
+      </div>
+      <div class="col-lg-4">
+        <div class="sidebar-card p-3 mb-3">
+          <h5 class="mb-0">Pathway log</h5>
+          <div id="audit-render" class="mt-2"><div class="muted">Started · Session initialised</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal for popups -->
+  <div class="modal fade" id="modalPopup" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalTitle">Details</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body" id="modalBody"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const RULES = {
+      resources: {
+        links: {
+          guideline: { label: "Guideline use/about the guideline", href: "#" },
+          triage: { label: "Triage category ??Question", href: "#" },
+          primary_survey_tool: { label: "Primary survey tool", href: "#" },
+          nets_calc: { label: "NETS calculator", href: "#" },
+          virtual_care: { label: "Virtual care support / virtual trauma team", href: "#" },
+          secondary_survey_tool: { label: "Secondary survey tool", href: "#" }
+        },
+        popups: {
+          alertstaff: {
+            title: "Alert relevant staff",
+            body: `<ul>
+              <li>Senior emergency department medical and nursing staff</li>
+              <li>Senior consultant in surgery</li>
+              <li>Operating theatre staff, if available</li>
+              <li>Interventional radiologists, if available</li>
+              <li>Radiology staff</li>
+              <li>Senior nursing administration</li>
+            </ul>`
+          },
+          traumasupport: {
+            title: "Trauma system support early",
+            body: `<ul>
+              <li>LHD Virtual care</li>
+              <li>LHD regional trauma service</li>
+              <li>NETS</li>
+              <li>NSW Aeromedical control</li>
+            </ul>`
+          },
+          bloods: {
+            title: "Suggested bloods",
+            body: `<ul>
+              <li>FBC, UEC, LFTs</li>
+              <li>Group &amp; Hold / Crossmatch as indicated</li>
+              <li>Venous blood gas</li>
+              <li>Lactate</li>
+            </ul>`
+          },
+          haemo_assessment: {
+            title: "Haemodynamic assessment (1a) & classification",
+            body: `<p>Classify into three groups based on age‑appropriate vitals and perfusion:</p>
+                   <ul><li><strong>Stable</strong></li><li><strong>Transient responder</strong></li><li><strong>Unstable</strong></li></ul>
+                   <p>Use trends, not single values.</p>`
+          },
+          resus_principles: {
+            title: "Resuscitation principles (1b)",
+            body: `<ul>
+              <li>ATLS approach</li>
+              <li>Judicious fluid boluses; consider blood early if shocked</li>
+              <li>Activate massive transfusion protocol per local policy</li>
+            </ul>`
+          },
+          fast_paeds: {
+            title: "FAST scan in paediatrics",
+            body: `<p>FAST can support decision‑making but is operator dependent. A negative FAST does not exclude injury; correlate with clinical status.</p>`
+          },
+          splenic_signs: {
+            title: "Suspicion / signs of splenic injury",
+            body: `<ul>
+              <li>Left upper quadrant pain or tenderness</li>
+              <li>Kehr sign</li>
+              <li>Hypotension/tachycardia out of proportion</li>
+              <li>Abdominal distension, guarding</li>
+            </ul>`
+          },
+          haemo_categories: {
+            title: "Haemodynamic categories",
+            body: `<p>Stable, Transient responder, Unstable — use in conjunction with age‑adjusted norms and overall perfusion.</p>`
+          },
+          /* New LSI popups (blue titles) */
+          lsi_airway: {
+            title: "Airway & RSI checklist",
+            body: `<ul>
+              <li>Call senior airway support early.</li>
+              <li>Maintain C‑spine considerations as clinically indicated.</li>
+              <li>Prepare for RSI; pre‑oxygenate; select paediatric equipment sizes per local charts.</li>
+              <li>Post‑intubation: confirm with capnography; consider lung‑protective ventilation.</li>
+            </ul>`
+          },
+          lsi_breathing: {
+            title: "Breathing — decompress if needed",
+            body: `<ul>
+              <li>Assess for tension pneumothorax; decompress immediately if suspected.</li>
+              <li>Provide high‑flow oxygen; support ventilation as required.</li>
+            </ul>`
+          },
+          lsi_access: {
+            title: "Vascular access (IV/IO)",
+            body: `<ul>
+              <li>Two large‑bore peripheral IVs where possible.</li>
+              <li>IO access if IV is delayed or unsuccessful.</li>
+              <li>Take bloods with first access (G&H/Crossmatch as indicated).</li>
+            </ul>`
+          },
+          lsi_mtp: {
+            title: "Activate Massive Transfusion Protocol",
+            body: `<ul>
+              <li>Activate early for haemorrhagic shock; follow local ratios and pack contents.</li>
+              <li>Use warmed blood products; monitor for coagulopathy, hypocalcaemia and hypothermia.</li>
+            </ul>`
+          },
+          lsi_txa: {
+            title: "Tranexamic acid (TXA)",
+            body: `<p>Consider within 3 hours of injury in major haemorrhage, according to local paediatric dosing policy.</p>`
+          },
+          lsi_calcium: {
+            title: "Calcium during transfusion",
+            body: `<p>Replace calcium per local massive transfusion guidance; monitor ionised calcium and ECG.</p>`
+          },
+          lsi_warm: {
+            title: "Prevent hypothermia",
+            body: `<ul>
+              <li>Active warming; warm room, blankets, fluid warmers, blood warmers.</li>
+              <li>Minimise exposure while ensuring access.</li>
+            </ul>`
+          },
+          lsi_or_ir: {
+            title: "Definitive control: Theatre vs Interventional Radiology",
+            body: `<ul>
+              <li>Escalate early to surgery/interventional radiology and retrieval as appropriate.</li>
+              <li>Choose operative vs IR pathway based on haemodynamic status and local capability.</li>
+            </ul>`
+          }
+        }
+      },
+      steps: [
+        {
+          id: "1",
+          title: "Child 0–16 with abdominal injury and suspected splenic trauma",
+          instruction: "Some content to show here.",
+          links: ["guideline", "triage"],
+          buttons: [{ label: "Start", next: "2" }]
+        },
+        {
+          id: "2",
+          title: "PREPARE",
+          instruction: "GOAL: Be prepared as possible before the child arrives (Sometimes this is not possible as the child is brought in, unannounced).",
+          description: `
+            <ul>
+              <li>Establish who is in your local trauma team and let them know the patient is coming or has arrived</li>
+              <li>If your information is that the child is potentially unstable, <span class='popup-link' data-popup='alertstaff'>alert relevant staff</span></li>
+              <li>If you don’t have trauma, surgical or paediatric capacity at your hospital, call for <span class='popup-link' data-popup='traumasupport'>trauma system support early</span></li>
+              <li>Prepare for the child’s arrival – e.g., use a Zero point survey</li>
+              <li>Prepare yourself, for example, use the I’m safe check list and mentally prepare</li>
+              <li>Optimise your environment</li>
+              <li>Check equipment</li>
+              <li>Brief the team and delegate roles and responsibilities</li>
+              <li>Apply Personal Protective Equipment</li>
+            </ul>
+          `,
+          buttons: [ { label: "Back", next: "1" }, { label: "Next", next: "3" } ]
+        },
+        {
+          id: "3",
+          title: "Primary survey, Resuscitation and seek advice",
+          instruction: `Initial assessment of a seriously injured child follows the same structured approach as that used in adults. Communicate early with retrieval services to obtain management support and determine if, when and how transfer will be required.`,
+          links: ["primary_survey_tool", "nets_calc", "virtual_care"],
+          description: `
+            <div class='mb-2 fw-semibold'>GOAL</div>
+            <ul>
+              <li>Identify and treat immediately life‑threatening injuries (primary survey)</li>
+              <li>Initiate and optimise resuscitation</li>
+              <li>Frequent reassessment is essential</li>
+              <li>Consider implications of associated life‑threatening injuries</li>
+            </ul>
+            <div class='mb-2'>Use: <span class='popup-link' data-popup='bloods'>Bloods</span>, <span class='popup-link' data-popup='haemo_assessment'>Haemodynamic assessment (1a)</span>, <span class='popup-link' data-popup='resus_principles'>Resuscitation principles (1b)</span>, <span class='popup-link' data-popup='fast_paeds'>FAST in paediatrics</span></div>
+            <div class='decision-callout mt-3'>
+              <div class='d-flex align-items-center justify-content-between flex-wrap gap-2 mb-1'>
+                <span class='title'>Decision point</span>
+                <span class='hint'>Critical branch</span>
+              </div>
+              <div class='mb-2'>Is there a life‑threatening emergency?</div>
+              <div class='d-flex gap-2 flex-wrap'>
+                <button class='btn btn-primary' data-next='lsi'>Yes</button>
+                <button class='btn btn-outline-primary' data-next='5'>No</button>
+              </div>
+            </div>
+          `,
+          buttons: [ { label: "Back", next: "2" } ]
+        },
+        {
+          id: "lsi",
+          title: "Life Saving Intervention",
+          instruction: "Life Saving Intervention Content.",
+          buttons: []
+        },
+        {
+          id: "5",
+          title: "Secondary survey and characterisation of the splenic injury",
+          instruction: "Some content to show here.",
+          links: ["secondary_survey_tool"],
+          description: `
+            <ul>
+              <li><span class='popup-link' data-popup='splenic_signs'>Suspicion of intra‑abdominal injury / Signs of splenic injury</span></li>
+              <li><span class='popup-link' data-popup='haemo_categories'>Haemodynamic categories</span></li>
+            </ul>
+            <div class='decision-callout mt-3'>
+              <div class='d-flex align-items-center justify-content-between flex-wrap gap-2 mb-1'>
+                <span class='title'>Decision point</span>
+                <span class='hint'>Critical branch</span>
+              </div>
+              <div class='mb-2'>Is the child requiring ongoing resuscitation?</div>
+              <div class='d-flex gap-2 flex-wrap'>
+                <button class='btn btn-primary' data-next='lsi'>Yes — not stable for CT</button>
+                <button class='btn btn-outline-primary' data-next='ct_avail'>No — proceed to CT availability</button>
+              </div>
+            </div>
+          `,
+          buttons: [ { label: "Back", next: "3" } ]
+        },
+        {
+          id: "ct_avail",
+          title: "Availability of CT Scan",
+          instruction: "Is CT scan available for a child/young person of this age?",
+          description: `
+            <div class='decision-callout mt-1'>
+              <div class='d-flex align-items-center justify-content-between flex-wrap gap-2 mb-1'>
+                <span class='title'>Decision point</span>
+                <span class='hint'>Resource check</span>
+              </div>
+              <div class='mb-2'>Is CT scan available?</div>
+              <div class='d-flex gap-2 flex-wrap'>
+                <button class='btn btn-primary' data-next='ct_scan'>Yes — CT available</button>
+                <button class='btn btn-outline-primary' data-next='transfer'>No — arrange transfer</button>
+              </div>
+            </div>
+          `,
+          buttons: [ { label: "Back", next: "5" } ]
+        },
+        {
+          id: "ct_scan",
+          title: "CT Scan",
+          instruction: "CT Scan Section Content.",
+          description: `
+            <div class='decision-callout mt-1'>
+              <div class='d-flex align-items-center justify-content-between flex-wrap gap-2 mb-1'>
+                <span class='title'>Decision point</span>
+                <span class='hint'>Injury grading</span>
+              </div>
+              <div class='mb-2'>Is this a confirmed splenic injury, and what is the grade of injury?</div>
+              <div class='d-flex gap-2 flex-wrap'>
+                <button class='btn btn-primary' data-next='lvl1'>Level 1</button>
+                <button class='btn btn-outline-primary' data-next='lvl2'>Level 2</button>
+                <button class='btn btn-outline-primary' data-next='lvl3'>Level 3</button>
+              </div>
+            </div>
+          `,
+          buttons: [ { label: "Back", next: "ct_avail" } ]
+        },
+        {
+          id: "transfer",
+          title: "Transfer",
+          instruction: "Transfer Content.",
+          buttons: [ { label: "Back", next: "ct_avail" } ]
+        },
+        {
+          id: "lvl1",
+          title: "Level 1",
+          instruction: "Level 1 Content.",
+          description: `
+            <div class='decision-callout mt-1'>
+              <div class='d-flex align-items-center justify-content-between flex-wrap gap-2 mb-1'>
+                <span class='title'>Decision point</span>
+                <span class='hint'>Local capacity</span>
+              </div>
+              <div class='mb-2'>Is there capacity and capability to admit a child/young person of this age?</div>
+              <div class='d-flex gap-2 flex-wrap'>
+                <button class='btn btn-primary' data-next='inpatient_ward'>Yes</button>
+                <button class='btn btn-outline-primary' data-next='transfer'>No</button>
+              </div>
+            </div>
+          `,
+          buttons: [ { label: "Back", next: "ct_scan" } ]
+        },
+        {
+          id: "lvl2",
+          title: "Level 2",
+          instruction: "Level 2 Content.",
+          description: `
+            <div class='decision-callout mt-1'>
+              <div class='d-flex align-items-center justify-content-between flex-wrap gap-2 mb-1'>
+                <span class='title'>Decision point</span>
+                <span class='hint'>Local capacity</span>
+              </div>
+              <div class='mb-2'>Is there capacity and capability to admit a child/young person of this age?</div>
+              <div class='d-flex gap-2 flex-wrap'>
+                <button class='btn btn-primary' data-next='inpatient_icu'>Yes</button>
+                <button class='btn btn-outline-primary' data-next='transfer'>No</button>
+              </div>
+            </div>
+          `,
+          buttons: [ { label: "Back", next: "ct_scan" } ]
+        },
+        {
+          id: "lvl3",
+          title: "Level 3",
+          instruction: "Content — Require ongoing resuscitation.",
+          description: `
+            <div class='decision-callout mt-1'>
+              <div class='d-flex align-items-center justify-content-between flex-wrap gap-2 mb-1'>
+                <span class='title'>Decision point</span>
+                <span class='hint'>Emergency check</span>
+              </div>
+              <div class='mb-2'>Is there a life‑threatening emergency?</div>
+              <div class='d-flex gap-2 flex-wrap'>
+                <button class='btn btn-primary' data-next='lsi'>Yes</button>
+                <button class='btn btn-outline-primary' data-next='cap_lvl3'>No</button>
+              </div>
+            </div>
+          `,
+          buttons: [ { label: "Back", next: "ct_scan" } ]
+        },
+        {
+          id: "cap_lvl3",
+          title: "Capacity for Level 3",
+          instruction: "Capacity for Level 3 content.",
+          description: `
+            <div class='decision-callout mt-1'>
+              <div class='d-flex align-items-center justify-content-between flex-wrap gap-2 mb-1'>
+                <span class='title'>Decision point</span>
+                <span class='hint'>Local capacity</span>
+              </div>
+              <div class='mb-2'>Is there capacity and capability to admit a child/young person of this age?</div>
+              <div class='d-flex gap-2 flex-wrap'>
+                <button class='btn btn-primary' data-next='inpatient_icu'>Yes</button>
+                <button class='btn btn-outline-primary' data-next='transfer'>No</button>
+              </div>
+            </div>
+          `,
+          buttons: [ { label: "Back", next: "lvl3" } ]
+        },
+        {
+          id: "inpatient_ward",
+          title: "Inpatient pathway — ward based",
+          instruction: "Inpatient pathway — ward based content.",
+          buttons: [ { label: "Back", next: "lvl1" }, { label: "Next — Discharge", next: "discharge" } ]
+        },
+        {
+          id: "inpatient_icu",
+          title: "Inpatient pathway: ICU/HDU care; possible intervention",
+          instruction: "Inpatient pathway: ICU/HDU care; possible intervention content.",
+          buttons: [ { label: "Back", next: "lvl2" }, { label: "Next — Inpatient pathway ward based", next: "inpatient_ward" } ]
+        },
+        {
+          id: "discharge",
+          title: "Discharge",
+          instruction: "Discharge content.",
+          buttons: [ { label: "Back", next: "inpatient_ward" }, { label: "End", next: "__reset__" } ]
+        }
+      ]
+    };
+
+    const $=(s,r=document)=>r.querySelector(s); const $$=(s,r=document)=>Array.from(r.querySelectorAll(s));
+    const state={ rules:RULES, currentId: RULES.steps[0].id, audit: [], lsiReturn: null };
+
+    function stepById(id){ return state.rules.steps.find(s=>s.id===id); }
+
+    function renderStep(){
+      const s=stepById(state.currentId);
+      const links=(s.links||[]).map(k=>{const l=state.rules.resources.links[k];return `<a href="${l.href}" class="link-chip" target="_blank" rel="noopener">${l.label}</a>`;}).join(' ');
+      const desc=s.description?`<div class='mt-2'>${s.description}</div>`:'';
+
+      // Dynamic Back for LSI: return to the step that led here
+      let btnsData=(s.buttons||[]);
+      if(s.id==='lsi'){
+        const backTarget = state.lsiReturn || '3';
+        btnsData = [{ label:'Back', next: backTarget }];
+      }
+      const btns=btnsData.map(b=>`<button class='btn ${b.label.toLowerCase().includes('back')?'btn-outline-secondary':'btn-primary'} me-2' data-next='${b.next??''}'>${b.label}</button>`).join('');
+
+      $('#step-container').innerHTML=`<div class='card-step p-3 p-md-4'>
+        <h2 class='h5 mb-2'>${s.title}</h2>
+        <div class='alert alert-instruction mb-2'>${s.instruction}</div>
+        ${links?`<div class='mb-2'>${links}</div>`:''}
+        ${desc}
+        <div class='d-flex justify-content-end mt-4'>${btns}</div>
+      </div>`;
+
+      // Button navigation
+      $$('#step-container [data-next]').forEach(b=>b.addEventListener('click',()=>{
+        pushAudit(s.title,b.textContent);
+        const nxt=b.getAttribute('data-next');
+        if(!nxt) return;
+        if(nxt==='__reset__'){
+          state.audit=[]; state.lsiReturn=null; state.currentId=state.rules.steps[0].id; renderStep(); renderAudit(); return;
+        }
+        if(nxt==='lsi'){ state.lsiReturn = state.currentId; }
+        state.currentId=nxt;
+        renderStep();
+      }));
+
+      // Popup links
+      $$('#step-container [data-popup]').forEach(b=>b.addEventListener('click',()=>openPopup(b.getAttribute('data-popup'))));
+    }
+
+    function openPopup(key){
+      const p = state.rules.resources.popups[key];
+      if(!p) return;
+      $('#modalTitle').textContent = p.title;
+      $('#modalBody').innerHTML = p.body;
+      bootstrap.Modal.getOrCreateInstance('#modalPopup').show();
+    }
+
+    function pushAudit(t,l){ state.audit.push({stepId:state.currentId,title:t,label:l,ts:Date.now()}); renderAudit(); }
+    function renderAudit(){ $('#audit-render').innerHTML=state.audit.map(e=>`<div class='audit-item'>${e.title} – <span class='muted'>${e.label}</span></div>`).join('')||'<div class="muted">Started · Session initialised</div>'; }
+
+    renderStep();
+    $('#btn-reset').addEventListener('click',()=>{ state.audit=[]; state.lsiReturn=null; state.currentId=state.rules.steps[0].id; renderStep(); renderAudit(); });
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
