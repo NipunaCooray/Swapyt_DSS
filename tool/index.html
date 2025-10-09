@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Paediatric Splenic Trauma — Decision Support System</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    :root {
+      --ink: #111827;
+      --muted: #5b6b82;
+      --card: #ffffff;
+      --line: #e6e8ee;
+      --brand: #0a66ff;
+      --brand-ink: #0a56d0;
+      --callout-bg: #fff6e5;
+      --callout-border: #ffe1a8;
+      --callout-accent: #ff9f1c;
+      --callout-ink: #7a5a32;
+    }
+
+    body {
+      background: #f6f8fb;
+      color: var(--ink);
+    }
+
+    .app {
+      max-width: 1000px;
+      margin: 24px auto;
+    }
+
+    .header-card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 16px;
+    }
+
+    .badge-dst {
+      background: #e8f0ff;
+      color: var(--brand-ink);
+      border: 1px solid #cfe0ff;
+      font-weight: 700;
+    }
+
+    .card-step {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      margin-bottom: 1rem;
+    }
+
+    .step-card-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: .75rem;
+    }
+
+    .alert-instruction {
+      background: #eef3ff;
+      border: 1px solid #dbe6ff;
+    }
+
+    .sidebar-card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+    }
+
+    .muted {
+      color: var(--muted);
+    }
+
+    .btn-primary {
+      background: var(--brand);
+      border-color: var(--brand);
+    }
+
+    .btn-outline-primary {
+      border-color: var(--brand);
+      color: var(--brand);
+    }
+
+    .btn-outline-primary:hover {
+      background: var(--brand);
+      color: #fff;
+    }
+
+    .popup-link {
+      color: var(--brand);
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .popup-link:hover {
+      text-decoration: underline;
+    }
+
+    .decision-callout {
+      background: var(--callout-bg);
+      border: 1px solid var(--callout-border);
+      border-left: 6px solid var(--callout-accent);
+      border-radius: 12px;
+      padding: 12px 14px;
+    }
+
+    .decision-callout .title {
+      font-weight: 700;
+    }
+
+    .decision-callout .hint {
+      color: var(--callout-ink);
+      font-size: .9rem;
+    }
+
+    .ext-indicator {
+      font-size: .8em;
+      color: var(--brand-ink);
+      font-weight: 600;
+      margin-left: .15em
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0
+    }
+
+    .step-link-btn {
+      width: 42px;
+      height: 42px;
+      border-radius: 9999px;
+      border: 1px solid var(--line);
+      background: #fff;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+    }
+
+    .step-link-btn:hover {
+      background: #f5f7ff;
+      border-color: #ccd6ff;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, .06);
+    }
+
+    .step-link-btn[disabled] {
+      opacity: .45;
+      cursor: not-allowed;
+    }
+
+    .step-link-icon {
+      width: 22px;
+      height: 22px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app container-fluid">
+    <div class="header-card mb-3 d-flex justify-content-between align-items-center flex-wrap gap-2">
+      <div class="d-flex align-items-center gap-3">
+        <span class="badge badge-dst rounded-pill px-3 py-2">DST</span>
+        <div>
+          <h1 class="h4 mb-0">Paediatric Splenic Trauma — Decision Support System</h1>
+          <div class="muted">Step by step guide</div>
+        </div>
+      </div>
+      <div class="d-flex gap-2">
+        <button id="btn-reset" class="btn btn-outline-secondary btn-sm">Reset</button>
+      </div>
+    </div>
+
+    <div class="row g-3">
+      <div class="col-lg-8">
+        <div id="step-container"></div>
+      </div>
+      <div class="col-lg-4">
+        <div class="sidebar-card p-3 mb-3">
+          <h5 class="mb-0">Pathway log</h5>
+          <div id="audit-render" class="mt-2">
+            <div class="muted">Started · Session initialised</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="modalPopup" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalTitle">Details</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" id="modalBody"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    function iconConsultingSVG() {
+      return '<svg class="step-link-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">\
+        <path d="M12 13c-4.418 0-8-2.686-8-6s3.582-6 8-6 8 2.686 8 6c0 1.88-.97 3.555-2.548 4.72L18 15l-3.28-1.64C13.84 13.79 12.95 14 12 14" stroke="#0a66ff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>\
+        <circle cx="8.5" cy="7" r=".9" fill="#0a66ff"/><circle cx="12" cy="7" r=".9" fill="#0a66ff"/><circle cx="15.5" cy="7" r=".9" fill="#0a66ff"/>\
+        <circle cx="6" cy="19" r="3" stroke="#0a66ff" stroke-width="1.5"/>\
+        <path d="M6 16.5c1.5 0 3 .9 3 2.2V21H3v-2.3c0-1.3 1.5-2.2 3-2.2Z" fill="#e8f0ff" stroke="#0a66ff" stroke-width="1.5" stroke-linejoin="round"/>\
+      </svg>';
+    }
+
+    const RULES = {
+      resources: {
+        stepExternal: {
+          start: 'https://www.google.com',
+          prepare: 'https://www.google.com',
+          primary: 'https://www.google.com',
+          lsi: 'https://www.google.com',
+          provide_lsi: 'https://www.google.com',
+          secondary: 'https://www.google.com',
+          ct_criteria: 'https://www.google.com',
+          ct_avail: 'https://www.google.com',
+          ct_scan: 'https://www.google.com',
+          lvl1: 'https://www.google.com',
+          lvl2: 'https://www.google.com',
+          lvl3: 'https://www.google.com',
+          cap_lvl3: 'https://www.google.com',
+          inpatient_icu: 'https://www.google.com',
+          inpatient_ward: 'https://www.google.com',
+          transfer: 'https://www.google.com',
+          discharge: 'https://www.google.com'
+        },
+        popups: {
+
+          //Start page popups
+
+          about_guide: {
+            title: 'About the guide', body: (
+              '<p>This guide has been developed in consultation and collaboration with consumers and clinicians working in a wide variety of contexts across NSW. Existing international paediatric splenic injury management guidelines have been reviewed, with recommendations adapted and added to, to reflect the to the variety of contexts in which children may present.</p>' +
+              '<p>With non-operative management being the standard of care of the vast majority of cases, the guide assists decision making, wherever a child presents in NSW.  This includes decisions regarding emergency management, evaluation for splenic injury, the rare need for intervention, inpatient care and after-care.</p>' +
+              '<p>This guide provides succinct and practical information in real-time and at the point of care. It also provides the option of links to more detailed information at each stage as well as links to other resources, such as guidelines, existing tools and published evidence.</p>' +
+              '<p>Initial assessment and management are based on APLS trauma management principles, in line with local trauma team practices.</p>' +
+              '<p>Resuscitation is based on the degree of haemodynamic compromise.</p>' +
+              '<p>Intervention decisions for the splenic injury are made based on haemodynamic compromise rather than grade. Intervention is rarely required.</p>' +
+              '<p>Where CT scan is available the injury may be graded according to AAST grading system. Grade may then play a role in deciding the best place of care.</p>' +
+              '<p>Decision making guidance is divided into three categories</p>' +
+              '<ul>' +
+              '<li>There are no signs of haemodynamic compromise/ongoing bleeding (and the injury is AAST Grade 1-3 where CT scan had been done)</li>' +
+              '<li>There were signs of haemodynamic compromise but there has been a sustained response to resuscitation (any grade), or there are no signs of haemodynamic compromise but the injury is AAST Grade 4-5</li>' +
+              '<li>There are signs of ongoing haemodynamic compromise and/or ongoing bleeding, despite resuscitation</li>' +
+              '</ul>' +
+              '<p>Use of telehealth advice, place of care and transfer decisions are made based on the degree of haemodynamic compromise, grade, presence of other injuries, and local resources and personnel capacity.</p>' +
+              '<p>The guideline can be used in late presentation at the discretion of the treating clinician. Care should address the specific symptoms that prompted the presentation.</p>' +
+              '<p>The guideline can be used in context of head injury and/or multiple other injuries, noting that those other injuries may take priority over following this guideline in directing management and place of care.</p>' +
+              '<p>Children with clinical evidence of generalised peritonitis and/or with CT scan evidence of hollow viscus perforation, impalement or other indications, require laparotomy. These scenarios are rare.</p>')
+          },
+
+          about_paediatric_splenic_injury: {
+            title: 'About paediatric splenic injury', body: (
+              '<p>The spleen is the most commonly injured abdominal organ in children.</p>' +
+              '<p>Patients at risk include those with:</p>' +
+              '<ul>' +
+              '<li>High impact / deceleration injuries (such as in car crashes, motorbike crashes, bicycle crashes, falls)</li>' +
+              '<li>Seat-belt injuries</li>' +
+              '<li>Direct blows to the abdomen;</li>' +
+              '<li>Evidence of injuries above and below the abdomen, suggesting the abdomen is unlikely to have been spared.</li>' +
+              '<li>Bicycle handlebar injuries to upper abdomen</li>' +
+              '<li>Penetrating injury to chest, abdomen or pelvis, especially if the entry and exit sites are above and below the diaphragm.</li>' +
+              '<li>Injuries suggestive of child abuse.</li>' +
+              '</ul>' +
+              '<p>Most bleeding from splenic injury settles on its own so intervention (including interventional radiology or surgery) is rarely required.</p>' +
+              '<p>More information on splenic injury in NSW can be found in this publication</p>' +
+              '<p>Management of the splenic injury in the NSW trauma system, Adams SE, Holland A, Brown J. Management of paediatric splenic injury in the New South Wales trauma system. Injury. 2017 Jan;48(1):106-113. doi: 10.1016/j.injury.2016.11.005. Epub 2016 Nov 8. PMID: 27866649. – <a href="https://www.sciencedirect.com/science/article/abs/pii/S0020138316307252" target="_blank" rel="noopener" title="Opens in a new tab">https://www.sciencedirect.com/science/article/abs/pii/S0020138316307252</a></p>')
+          },
+
+          // PREPARE popups
+          local_trauma_team: { title: 'local trauma team', body: ('<p>it is recommended that a trauma team for your context be identified. Suggested roles are contained in this Link. In smaller centres a person may need to take on more than one role Trauma team structure | Victorian State Trauma System</p>') },
+          alert_relevant_staff: { title: 'alert relevant staff', body: ('<ul><li>Senior emergency department medical and nursing staff</li><li>senior consultant in surgery, if available</li><li>operating theatre staff, if available</li><li>interventional radiologists, if available</li><li>radiology staff</li><li>Senior nursing administration.</li></ul>') },
+          trauma_system_support_early: { title: 'trauma system support early', body: ('<p>For a child in whom your concern for intraabdominal injury is high, call NETS on 1300 362 500 Link Newborn & pædiatric Emergency Transport Service (NETS)</p><p>Other options for the less severely injured child are</p><ul><li>LHD Virtual care</li><li>LHD regional trauma service</li><li>PATCH (1:CHW; 2: SCH) LINK - PATCH flowchart</li></ul>') },
+          im_safe_check_list: { title: 'I’m safe check list', body: ('<p>Conduct a rapid physical readiness assessment for illness, medication and other drugs, stress, alcohol, fatigue, eating and elimination.</p><p>Take any necessary actions, for example empty your bladder, eat a snack or do deep breathing to reduce stress impulses.</p>') },
+          mentally_prepare: { title: 'mentally prepare', body: ('<p>This includes visualisation of complex tasks, deep breathing exercises to maintain focus, and positive self-talk to help focus.</p>') },
+          environment: { title: 'environment', body: ('<p>Optimise safety and adequacy of the workspace. Consider dangers, space, light, noise and crowd control.</p>') },
+          equipment: { title: 'equipment', body: ('<p>Ensure that your department has a paediatric resuscitation trolley that contains the paediatric equipment required for resuscitation, .LINK Paediatric Resuscitation Trolley Minimum Equipment (ACI)</p><p>To this you could add pelvic binder, thoracostomy or chest tube kit, fluids, intravenous cannulas, giving sets, ultrasound machine, etc</p><p>When assigning roles, assign equipment preparation with each role.</p>') },
+          brief_the_team: { title: 'Brief the team', body: ('<p>Identify a team leader and allocate roles. Provide the team with information on the patient’s age, mechanism of injury, injuries, vital signs, treatment and expected time of arrival. Discuss and plan definitive care options.</p>') },
+          personal_protective_equipment: { title: 'Personal Protective Equipment', body: ('<p>Gloves, gown, mask, glasses and radiology lead gowns. Don before patient arrives</p>') },
+
+          alertstaff: { title: 'Alert relevant staff', body: '<ul><li>Senior emergency department medical and nursing staff</li><li>senior consultant in surgery</li><li>operating theatre staff, if available</li><li>interventional radiologists, if available</li><li>radiology staff</li><li>Senior nursing adminsitration.</li></ul>' },
+          traumasupport: { title: 'Trauma system support early', body: '<ul><li>LHD Virtual care</li><li>LHD regional trauma service</li><li>NETS</li><li>NSW Aeromedical control </li></ul>' },
+          zero_point: { title: 'Zero point survey', body: '<p>LINK: <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC6166036/" target="_blank" rel="noopener" title="Opens in a new tab">Zero Point Survey</a></p><p>LINK: <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC6166036/figure/f1-ceem-17-269/" target="_blank" rel="noopener" title="Opens in a new tab">Zero Point Survey (Flowchart)</a></p>' },
+          splenic_signs: { title: 'Suspicion / signs of splenic injury', body: '<ul><li>LUQ pain/tenderness</li><li>Kehr sign</li><li>Hypotension/tachycardia</li><li>Distension/guarding</li></ul>' },
+          haemo_categories: { title: 'Haemodynamic categories', body: '<p>Stable · Transient responder · Unstable.</p>' }
+          ,
+
+          //Primary survey popups
+          example_trauma_call_criteria: { title: 'Example of trauma call criteria', body: ('<p>Content to be added</p>') },
+          assess_haemo_compromise: {
+            title: 'Assess haemodynamic compromise', body: (
+              '<p>Haemodynamic compromise: loss of enough circulating blood volume to cause physiological changes.</p>' +
+              '<p>There is no single measure of haemodynamic compromise at any one point in time.</p>' +
+              '<p>Frequent re-assessment of multiple parameters is essential, integrating clinical and haemodynamic parameters to detect subtle signs of haemodynamic compromise developing over time.</p>' +
+              '<p>Signs of haemodynamic compromise may include:</p>' +
+              '<ul>' +
+              '<li>Obvious route of blood loss (external/ long bone fractures, intrathoracic clinically or seen on CXR, intraperitoneal seen on e-FAST, retroperitoneal, pelvic fracture). N.b., e-FAST to direct investigation and management in injured children is not validated but reference is included as it may be in use in non-paediatric centres.</li>' +
+              '<li>Vital signs, colour</li>' +
+              '<li>Respiratory rate, level of consciousness</li>' +
+              '<li>Heart rate (although can be up due to pain and fear)</li>' +
+              '<li>Central capillary refill</li>' +
+              '<li>Blood pressure – n.b., Falling blood pressure is a late sign of haemodynamic compromise and may signal imminent circulatory collapse</li>' +
+              '</ul>' +
+              '<p>Any recurrent haemodynamic compromise is likely to occur within a relatively short space of time, whereas lack of sustained Hb response to transfusion with no other signs of haemodynamic compromise may occur over 12–48 hours.</p>' +
+              '<p>A drop in Hb of 5g/l is expected if a crystalloid fluid bolus of 10–20mls/kg has been given and does not necessarily represent ongoing bleeding.</p>')
+          },
+
+          //Life threatening popups
+
+          paed_mtp_flowsheet: {
+            title: 'Paediatric massive transfusion flow sheet',
+            body: ('<p>Content to be added</p>')
+          },
+          surgery_principles: {
+            title: 'Surgery',
+            body: '<p><strong>Surgical principles in blunt splenic injury</strong></p><p>An operation is rarely required in the child/young person with splenic injury, even in the context of other solid organ injuries.</p><ul><li>Isolated splenic injury – less than 1% require laparotomy</li><li>Splenic injury with other intraabdominal injuries – up to 11% may require an operation.</li></ul><p><strong>Consider operation in a child/young person with splenic injury if</strong></p><ul><li>Surgical and anaesthetic expertise is available</li><li>There is ongoing intraabdominal bleeding that is contributing to ongoing haemodynamic compromise, despite adequate resuscitation</li><li>There are other intraabdominal injuries requiring operation (e.g., hollow viscus injury). Note, the presence of other solid organ injuries alone is not an indication for operation if the child is or can be made haemodynamically stable</li><li>Operation is preferred over AE in setting of other intraabdominal injuries that may be contributing to compromise</li><li>Splenic preservation is pursued if possible.</li></ul>'
+          },
+          interventional_radiology: {
+            title: 'Interventional radiology',
+            body: '<p><strong>Angioembolisation principles.</strong></p><p>Less than 3% of children with blunt splenic injury receive angioembolisation, with most being done in adult trauma centres (Swendiman 2020).</p><p>Prophylactic angioembolisation in the stable child is not recommended. CT finding of splenic injury grade/contrast blush/pseudoaneurysm are not indications for angioembolisation in the absence of evidence of ongoing bleeding.</p><p><strong>Consider angioembolisation for splenic injury if</strong></p><ul><li>Expertise is available</li><li>There is a lack of sustained Hb response to resuscitation</li><li>Ongoing intraabdominal bleeding from embolisable source is contributing to recurrent haemodynamic compromise despite resuscitation</li><li>Child/young person can be rendered stable enough to go to the angio suite</li></ul><p>Use Hybrid operating suite if available (find evidence).</p>'
+          },
+
+          trauma_bloods: {
+            title: 'Trauma bloods', body: (
+              '<p>Trauma bloods (do not wait for results to commence resuscitation)</p>' +
+              '<ul><li>FBC</li><li>EUC</li><li>LFT’s</li><li>Amylase</li><li>Lipase</li><li>Group &amp; hold/cross match</li><li>Coagulation</li><li>U/A</li></ul>')
+          },
+          resus_principles: {
+            title: 'Resuscitation principles', body: (
+              '<p>Resuscitation principles</p>' +
+              '<p>Goal: resuscitate and achieve source control</p>' +
+              '<p>The need for circulatory resuscitation is based on</p>' +
+              '<ul>' +
+              '<li>Signs haemodynamic compromise (with or without crystalloid bolus)</li>' +
+              '<li>Hb&lt;70g/L</li>' +
+              '<li>Evidence of ongoing bleeding</li>' +
+              '</ul>' +
+              '<ul>' +
+              '<li>Do not wait for blood results before starting resuscitation</li>' +
+              '<li>Frequent re-assessment is essential, integrating clinical and haemodynamic parameters</li>' +
+              '<li>There is no place for ‘permissive hypotension’ in this age group</li>' +
+              '</ul>' +
+              '<p>Management</p>' +
+              '<p>Concurrently:</p>' +
+              '<ul>' +
+              '<li>Ensure physical control of other haemorrhage sources (pressure/tourniquet/pack wounds)</li>' +
+              '<li>Establish IV access – two, as large a possible (take trauma bloods at insertion)</li>' +
+              '<li>Stabilise fractures/apply pelvic binder</li>' +
+              '<li>Instigate early activation of MTP according to local criteria. [link: SCHN MTP or relevant local MTP]</li>' +
+              '<li>If haemodynamic compromise is present, volume is required. Avoid crystalloid if possible and give blood as soon as available. Start with 10mls/kg, reassess and repeat as required [link – resuscitation]</li>' +
+              '<li>If there is a delay accessing blood or blood is not available, start with crystalloid (normal saline), changing to blood ASAP, to limit the adverse effects of crystalloids, including worsening coagulopathy.</li>' +
+              '<li>Give TXA 15 mg/kg then consider TXA infusion 2mg/kg/hr if ongoing bleeding suspected</li>' +
+              '<li>A transfusion threshold of 7.0 g/dL is reasonable for children undergoing NOM for BLSI even if other signs of haemodynamic compromise are absent</li>' +
+              '<li>Assess response to resuscitation including use of point of care testing if available (ROTEM or TEG) in context of MTP</li>' +
+              '</ul>')
+          },
+          massive_haem_paeds: { title: 'Massive haemorrhage in Paediatric trauma', body: ('<p>Content to be added</p>') },
+          determine_haemo_status: {
+            title: 'Determine the haemodynamic status of the child/young person', body: (
+              '<ul>' +
+              '<li>GROUP 1: There have been no signs of haemodynamic compromise OR</li>' +
+              '<li>GROUP 2: There were signs of haemodynamic compromise but there has been a sustained response to resuscitation OR</li>' +
+              '<li>GROUP 3: There are signs of ongoing haemodynamic compromise and/or ongoing bleeding, despite resuscitation</li>' +
+              '</ul>')
+          },
+
+          //Secondary survey popups
+          history: {
+            title: 'History',
+            body: '<p>Blunt trauma to the abdomen following</p><ul><li>Motor vehicle crash or other high impact, deceleration injuries</li><li>Car vs pedestrian or bicycle</li><li>Bicycle crash with high impact or handlebar into the abdomen</li><li>Fall more than 6 metres or onto sharp ledge</li><li>Crush injury to torso</li><li>Direct blow to the abdomen such as contact sports, physical assault, including suspicion of child abuse</li></ul>'
+          },
+          symptoms: {
+            title: 'Symptoms',
+            body: '<ul><li>Feeling lethargic, light-headed, dizzy, winded or nauseous</li><li>Abdominal pain and tenderness, holding the tummy, doubled over, refusing to walk</li><li>Pain in the back (kidney, pancreas), chest or shoulder (left: spleen; right: liver)</li><li>Blood in the urine (kidney)</li></ul>'
+          },
+          examination: {
+            title: 'Examination',
+            body: '<ul><li>Any signs of circulatory compromise (continue resuscitation)</li><li>Marks, bruises or wounds to the abdomen.</li><li>Abdominal distension</li><li>Abdominal tenderness</li><li>Generalised guarding</li><li>Pelvic instability or tenderness</li><li>Blood at the urethral meatus</li><li>Inspection of the back &amp; perineum</li></ul>'
+          },
+
+          //CT Scan criteria popups
+          ct_scan_criteria: {
+            title: 'CT scan',
+            body: '<p><strong>CT abdomen is recommended when there is:</strong></p><ul><li>Abnormal abdominal examination — tenderness, distension, bruising and peritonitis</li><li>Elevated ALT &gt; 125 IU/L</li><li>Gross haematuria</li><li>Abnormal pelvic radiograph</li><li>Low haematocrit</li><li>Positive FAST scan (if done)</li></ul>'
+          },
+          holmes_2013: {
+            title: 'Holmes 2013',
+            body: '<p>Content to be added</p>'
+          },
+          springer_2019: {
+            title: 'Springer 2019',
+            body: '<p>Content to be added</p>'
+          },
+          ct_dose_optimisation: {
+            title: 'CT dose optimisation',
+            body: '<p>Content to be added</p>'
+          },
+
+          //Inpatient ward based popups
+          virtual_trauma_ward_round: {
+            title: 'Virtual Trauma Ward Round',
+            body: '<p>Virtual trauma ward round to be developed</p>'
+          },
+
+          //Transfer popups
+          group1: {
+            title: 'Group 1',
+            body: '<p>GROUP 1: Has never had signs of bleeding and remains haemodynamically stable.</p>'
+          },
+          group23: {
+            title: 'Group 2 and 3',
+            body: '<p>GROUP 2: Did have signs of bleeding and required resuscitation but now remains haemodynamically stable.</p><p>GROUP 3: There is concern about ongoing bleeding with the need for ongoing resuscitation.</p>'
+          },
+          patch: {
+            title: 'PATCH',
+            body: '<p>PATCH 13004 TRAUMA</p>'
+          },
+          lhd_virtual_care: {
+            title: 'LHD Virtual care',
+            body: '<p>Content to be added.</p>'
+          },
+          concerning_mechanism: {
+            title: 'Concerning mechanism',
+            body: '<p>GROUP 1: Has never had signs of bleeding and remains haemodynamically stable.</p><p>GROUP 2: Did have signs of bleeding and required resuscitation but now remains haemodynamically stable.</p><p>GROUP 3: There is concern about ongoing bleeding with the need for ongoing resuscitation.</p>'
+          },
+          isbar: {
+            title: 'ISBAR',
+            body: '<p>Content to be added.</p>'
+          }
+
+        }//end popups
+
+      },
+      steps: [
+        {
+          id: 'start', title: 'Child 0–16 with abdominal injury and suspected splenic trauma',
+          instruction: 'The management of paediatric splenic injury: quick reference guide is an education tool and a practical guide to support clinicians managing a child or young person up to age 16 who is suspected of having a splenic injury.',
+          description: ('<p>This guide is intended for all healthcare workers who provide clinical care to children and young people who may have a splenic injury. It may be used wherever they may present or be transferred to in NSW and is particularly designed for clinicians working in regional or rural settings and/or clinicians who do not regularly manage injured children.</p><p>This quick reference guide is not intended to replace senior clinical decision-making. Any concerns should be escalated locally, and/or through communication channels recommended in the guideline.  It does not represent a systematic review of evidence; however, it provides links to various established clinical resources and high-level evidence where relevant.</p><p>Not all content mentioned in this resource is necessarily within a clinician’s scope of practice.</p><div class="alert alert-warning my-2"><strong>All clinicians should work within their scope of practice.</strong></div><h6 class="mt-2">Disclaimer</h6><p>These guidelines have been produced to guide clinical decision making for the medical, nursing and allied health staff of Perth Children\'s Hospital. They are not strict protocols, and they do not replace the judgement of a senior clinician. Clinical common-sense should be applied at all times. These clinical guidelines should never be relied on as a substitute for proper assessment with respect to the particular circumstances of each case and the needs of each patient. Clinicians should also consider the local skill level available and their local area policies before following any guideline.</p><p><span class="popup-link" data-popup="about_guide">About the guide</span></p><p><span class="popup-link" data-popup="about_paediatric_splenic_injury">About paediatric splenic injury</span></p>'),
+          buttons: [{ label: 'Start', next: 'prepare' }]
+        },
+
+        {
+          id: 'prepare',
+          title: 'PREPARE',
+          instruction: 'GOAL: Be prepared as possible before the child arrives  (Sometimes this is not possible as the child is brought in, unannounced)',
+          description: ('<ul><li>Establish who is in your <span class="popup-link" data-popup="local_trauma_team">local trauma team</span> and let them know the patient is coming or has arrived</li><li>If your information is that the child is potentially unstable, <span class="popup-link" data-popup="alert_relevant_staff">alert relevant staff</span></li><li>If you don\'t have trauma, surgical or paediatric capacity at your hospital, call for <span class="popup-link" data-popup="trauma_system_support_early">trauma system support early</span></li><li>Prepare for the child\'s arrival – e.g., use a Zero point survey</li><li>Prepare yourself, for example, use the <span class="popup-link" data-popup="im_safe_check_list">I\'m safe check list</span> and <span class="popup-link" data-popup="mentally_prepare">mentally prepare</span></li><li>Optimise your&nbsp;<span class="popup-link" data-popup="environment">environment</span></li><li>Check <span class="popup-link" data-popup="equipment">equipment</span></li><li><span class="popup-link" data-popup="brief_the_team">Brief the team</span> and delegate roles and responsibilities</li><li>Apply <span class="popup-link" data-popup="personal_protective_equipment">Personal Protective Equipment</span></li></ul><div class="mt-3"><div class="fw-semibold">Further references and resources:</div><ul><li>LINK: <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC6166036/figure/f1-ceem-17-269/" target="_blank" rel="noopener" title="Opens in a new tab">Zero Point Survey article</a></li><li>LINK: <a href="https://trauma.reach.vic.gov.au/guidelines/teamwork-and-communication/effective-communication/" target="_blank" rel="noopener" title="Opens in a new tab">Effective Communication | Victorian State Trauma System</a></li></ul></div>'),
+          buttons: [{ label: 'Next', next: 'primary' }]
+        },
+
+        {
+          id: 'primary',
+          title: 'Primary survey, Resuscitation and seek advice',
+          instruction: 'Initial assessment of a seriously injured child follows the same structured approach as that used in adults. Communicate early with retrieval services to obtain management support and determine if, when and how transfer will be required',
+          description: (
+            '<ul>' +
+            '<li>Call your <span class="popup-link" data-popup="local_trauma_team">local trauma team</span> if there is a concerning mechanism, vital signs are abnormal or urgent treatments are required</li>' +
+            '<li><span class="popup-link" data-popup="example_trauma_call_criteria">Example of trauma call criteria</span></li>' +
+            '<li>Conduct Primary survey and commence resuscitation</li>' +
+            '<li>Link Trauma Service: <a href="https://www.rch.org.au/trauma-service/manual/primary-and-secondary-survey/" target="_blank" rel="noopener" title="Opens in a new tab">Primary and secondary survey</a></li>' +
+            '<li><span class="popup-link" data-popup="assess_haemo_compromise">Assess haemodynamic compromise</span></li>' +
+            '<li><span class="popup-link" data-popup="trauma_bloods">Trauma bloods</span></li>' +
+            '<li><span class="popup-link" data-popup="resus_principles">Resuscitation principles</span></li>' +
+            '<li>Fluid Resuscitation in Paediatric Trauma (<a href="https://www.apls.org.au/algorithm-fluids-trauma" target="_blank" rel="noopener" title="Opens in a new tab">APLS Algorithm</a>)</li>' +
+            '<li><span class="popup-link" data-popup="massive_haem_paeds">Massive haemorrhage in Paediatric trauma</span></li>' +
+            '<li>LINK: <a href="https://calc.nets.org.au/ClinCalcMenu.php" target="_blank" rel="noopener" title="Opens in a new tab">NETS Clinical Calculator</a></li>' +
+            '<li><span class="popup-link" data-popup="determine_haemo_status">Determine the haemodynamic status of the child/young person</span></li>' +
+            '</ul>' +
+            '<div class="decision-callout mt-3">\
+              <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-1"><span class="title">Decision point</span><span class="hint">Critical branch</span></div>\
+              <div class="mb-2">Is there a life threatening emergency?</div>\
+              <div class="d-flex gap-2 flex-wrap">\
+                <button class="btn btn-primary" data-next="lsi">Yes</button>\
+                <button class="btn btn-outline-primary" data-next="secondary">No</button>\
+              </div>\
+            </div>'
+          ),
+
+          buttons: []
+        },
+
+        {
+          id: 'lsi', title: 'Life Threatening Emergency',
+          instruction: '<p>The need for life-saving abdominal surgery in paediatric trauma is extremely rare.</p><p>However, in the unlikely situation where the child is only transiently responding to resuscitation in the short term, or not responding at all, and the blood loss is thought to be intraabdominal, this may be required.</p><p>Priorities are:</p><ul><li>COMMUNICATION</li><li>ONGOING RESUSCITATION</li><li>STABILISING “DAMAGE CONTROL” OR DEFINATIVE CARE</li></ul>',
+          description: `
+          
+          <p><strong>GOAL:</strong> provide stabilising care to children with life-threatening injuries</p><p><strong>COMMUNICATION</strong></p><p>Away from a trauma centre or if advice and/or retrieval is required, call <a href="https://nswhealth.sharepoint.com/sites/SCHN-NETSINTRANET" target="_blank" rel="noopener">NETS - Clinical Hub - Home</a> early for advice and support from the Virtual Paediatric Trauma Team.</p><p><strong>ONGOING RESUSCITATION</strong></p><ul><li>Control any other potential sources of haemorrhage</li><li>Activate the massive transfusion protocol and commence balanced component resuscitation</li><li><span class="popup-link" data-popup="paed_mtp_flowsheet">Paediatric massive transfusion flow sheet</span></li><li><a href="https://www.apls.org.au/algorithm-blood-fluids-trauma" target="_blank" rel="noopener">Massive Haemorrhage in Paediatric Trauma (APLS Algorithm)</a></li><li>If you don’t have blood products available, contact <a href="https://nswhealth.sharepoint.com/sites/SCHN-NETSINTRANET" target="_blank" rel="noopener">NETS - Clinical Hub - Home</a> for products to be brought with the retrieval team or LHD paramedics.</li></ul><p><strong>DAMAGE CONTROL OR DEFINITIVE CARE – <span class="popup-link" data-popup="surgery_principles">Surgery</span></strong></p><ul><li>Seek the advice and support of the virtual paediatric trauma team via <a href="https://nswhealth.sharepoint.com/sites/SCHN-NETSINTRANET" target="_blank" rel="noopener">NETS - Clinical Hub - Home</a></li><li>Mobilise local surgical, anaesthetic and operating theatre capability if available.</li><li>Together with the virtual paediatric trauma team:<ul><li>Assess whether urgent intervention is required and possible, with the support and advice from virtual paediatric trauma team</li><li>If intervention is required, and there is capacity to do so locally, go ahead with virtual paediatric trauma team advice and support as needed.</li></ul></li><li>If there is no capacity to intervene locally, or the child/young person can be made stable enough for transfer, arrange retrieval to your regional trauma centre or a paediatric trauma centre, depending on the age of the child, surgical capacity, distance and the advice from the virtual paediatric trauma team</li></ul><p><strong>DEFINATIVE CARE – </strong> <span class="popup-link" data-popup="interventional_radiology">Interventional radiology</span></p><p><strong>Further references and resources</strong></p><ul><li><a href="https://resources.schn.health.nsw.gov.au/policies/policies/pdf/2014-7000.pdf" target="_blank" rel="noopener">Massive Transfusion Protocol (MTP) – Paediatric</a></li></ul>
+
+          <div class='decision-callout mt-3'>
+            <div class='d-flex align-items-center justify-content-between flex-wrap gap-2 mb-1'>
+              <span class='title'>Decision point</span>
+              <span class='hint'>Urgent intervention?</span>
+            </div>
+            <div class='mb-2'>Is it possible to provide life-saving urgent intervention: damage control surgery or IR (if surgical/anaesthetic capacity and capability)?</div>
+            <div class='d-flex gap-2 flex-wrap'>
+              <button class='btn btn-primary' data-next='provide_lsi'>Yes</button>
+              <button class='btn btn-outline-primary' data-next='transfer'>No</button>
+            </div>
+          </div>
+        `, buttons: []
+        },
+
+        {
+          id: 'provide_lsi', title: 'Provide Life Saving Intervention', instruction: 'Life Saving Intervention Content.', description: `
+          <div class='decision-callout mt-3'>
+            <div class='d-flex align-items-center justify-content-between flex-wrap gap-2 mb-1'>
+              <span class='title'>Decision point</span>
+              <span class='hint'>Capacity & capability</span>
+            </div>
+            <div class='mb-2'>Is there Capacity to admit the child (RCT, ATC, PTC)?</div>
+            <div class='d-flex gap-2 flex-wrap'>
+              <button class='btn btn-primary' data-next='inpatient_icu'>Yes</button>
+              <button class='btn btn-outline-primary' data-next='transfer'>No</button>
+            </div>
+          </div>
+        `, buttons: []
+        },
+
+        {
+          id: 'secondary', title: 'Secondary survey and characterisation of the splenic injury',
+          instruction: '<p>The secondary survey follows the completion of the primary survey, after immediate threats to life have been managed and the patient is stable.</p><p>Continuous assessment of C-ABCD should occur during the secondary survey.</p><p>Give appropriate analgesia before the examination.</p><p>Develop a rapport with the child/young persons and family members and explain the steps of the secondary survey.</p><p>Uncover the child/young person only as needed. Always maintain warmth and privacy. Keep a parent or carer with the child wherever possible.</p>',
+          description: `
+           
+            <p><strong>GOAL:</strong></p><ul><li>Assess for other non-life-threatening injuries</li><li>Assess for intraabdominal injury</li><li>Arrange investigations and definitive care</li></ul><p><em>Note: If the child deteriorates during the secondary survey, go back to the primary survey</em></p><h6>ASSESS FOR OTHER NON-LIFE-THREATENING INJURIES – secondary survey</h6><p>LINK: <a href="https://www.rch.org.au/clinicalguide/guideline_index/Major_paediatric_trauma_the_secondary_survey/" target="_blank" rel="noopener">Performing a Paediatric Secondary Survey (RCH)</a></p><h6>ASSESS FOR INTRAABDOMINAL INJURY</h6><p>LINK Trauma Service: <a href="https://www.rch.org.au/trauma-service/manual/abdominal-injury/#toc-12" target="_blank" rel="noopener">Abdominal injury</a></p><p><span class="popup-link" data-popup="history">History</span></p><p><span class="popup-link" data-popup="symptoms">Symptoms</span></p><p><span class="popup-link" data-popup="examination">Examination</span></p><p>Note – assessment is unreliable in children with neurological conditions, and pregnancy</p><h6>ARRANGE INVESTIGATIONS AND DEFINITIVE CARE (back to flow sheet)</h6>
+  
+
+            <div class='decision-callout mt-3'>
+              <div class='d-flex align-items-center justify-content-between flex-wrap gap-2 mb-1'><span class='title'>Decision point</span><span class='hint'>Critical branch</span></div>
+              <div class='mb-2'>Is the child requiring ongoing resuscitation thus not stable for CT?</div>
+              <div class='d-flex gap-2 flex-wrap'>
+                <button class='btn btn-primary' data-next='lsi'>Yes, the child requires ongoing resuscitation</button>
+                <button class='btn btn-outline-primary' data-next='ct_criteria'>No, the child is stable for CT scan</button>
+              </div>
+            </div>`, buttons: []
+        },
+
+        {
+          id: 'ct_criteria', title: 'CT Scan Decision Tool',
+          instruction: '<p>Contrast-enhanced CT scan is the gold standard for identifying and classifying intraabdominal injury.</p>',
+          description: `
+
+            <p><strong>GOAL:</strong></p><ul><li>Identify children and young people who may have intraabdominal injury and warrant a CT scan while avoiding unnecessary scans</li><li>Ensure the scan can be conducted soon, safely, effectively and successfully</li></ul><h6>IDENTIFY WHEN A CT SCAN IS WARRANTED</h6><ul><li>CT scan may be recommended on clinical suspicion, based on history and examination (<span class="popup-link" data-popup="ct_scan_criteria">criteria</span>).</li><li>Call the Virtual Trauma team via <a href="https://nswhealth.sharepoint.com/sites/SCHN-NETSINTRANET" target="_blank" rel="noopener">NETS - Clinical Hub - Home</a> for help deciding whether CT scan is advisable.</li><li>These tools may help you decide when CT scan can be avoided: <span class="popup-link" data-popup="holmes_2013">Holmes 2013</span>, <span class="popup-link" data-popup="springer_2019">Springer 2019</span>.</li></ul><h6>ENSURE THE SCAN CAN BE CONDUCTED SOON, SAFELY, EFFECTIVELY AND SUCCESSFULLY</h6><ul><li>If CT scan is not available, arrange retrieval with the help of <a href="https://nswhealth.sharepoint.com/sites/SCHN-NETSINTRANET" target="_blank" rel="noopener">NETS - Clinical Hub - Home</a>.</li><li>If CT scan is warranted and available, it should go ahead if safe to do so.</li></ul><p><strong>Note</strong></p><ul><li>As CT scan is quick, sedation or intubation are rarely required.</li><li>Younger or uncooperative children may need intubation. This will influence whether the scan can be done at lower resource settings.</li><li>A senior trauma team member should remain with the child to monitor haemodynamic status.</li><li>A parent or carer should remain with the child.</li><li>The scan should be performed according to recognised paediatric blunt abdominal trauma protocols, with <span class="popup-link" data-popup="ct_dose_optimisation">CT dose optimisation</span>.</li></ul><p><strong>Further references and resources</strong></p><ul><li>Alzahem AM, Soundappan SSV, Cass DT. The Predictors for Positive Yield Abdominal Computed Tomography in Pediatric Abdominal Trauma. <em>Pediatr Emerg Care.</em> 2020;36(10):e543–e548. <a href="https://pubmed.ncbi.nlm.nih.gov/29200143/" target="_blank" rel="noopener">PubMed</a></li></ul>
+
+            <div class='decision-callout mt-1'>
+              <div class='d-flex align-items-center justify-content-between flex-wrap gap-2 mb-1'><span class='title'>Decision point</span><span class='hint'>Criteria check</span></div>
+              <div class='mb-2'>Does the child meet CT scan criteria?</div>
+              <div class='d-flex gap-2 flex-wrap'>
+                <button class='btn btn-primary' data-next='ct_avail'>Yes — meets criteria</button>
+                <button class='btn btn-outline-primary' data-next='ct_criteria'>No — does not meet criteria</button>
+              </div>
+            </div>`, buttons: []
+        },
+
+        {
+          id: 'ct_avail', title: 'Availability of CT Scan', instruction: 'Is CT scan available for a child/young person of this age?', description: `
+            <div class='decision-callout mt-1'>
+              <div class='d-flex align-items-center justify-content-between flex-wrap gap-2 mb-1'><span class='title'>Decision point</span><span class='hint'>Resource check</span></div>
+              <div class='mb-2'>Is CT scan available?</div>
+              <div class='d-flex gap-2 flex-wrap'>
+                <button class='btn btn-primary' data-next='ct_scan'>Yes — CT available</button>
+                <button class='btn btn-outline-primary' data-next='transfer'>No — arrange transfer</button>
+              </div>
+            </div>`, buttons: []
+        },
+
+        {
+          id: 'ct_scan', title: 'Spleen injury grading', instruction: 'Grading splenic injury.', description: `
+            <div class='decision-callout mt-1'>
+              <div class='d-flex align-items-center justify-content-between flex-wrap gap-2 mb-1'><span class='title'>Decision point</span><span class='hint'>Injury grading</span></div>
+              <div class='mb-2'>Is this a confirmed splenic injury, and what is the grade of injury?</div>
+              <div class='d-flex gap-2 flex-wrap'>
+                <button class='btn btn-primary' data-next='lvl1'>Level 1</button>
+                <button class='btn btn-outline-primary' data-next='lvl2'>Level 2</button>
+                <button class='btn btn-outline-primary' data-next='lvl3'>Level 3</button>
+              </div>
+            </div>`, buttons: []
+        },
+
+        {
+          id: 'lvl1', title: 'Level 1', instruction: 'Level 1 Content.', description: `
+            <div class='decision-callout mt-1'>
+              <div class='d-flex align-items-center justify-content-between flex-wrap gap-2 mb-1'><span class='title'>Decision point</span><span class='hint'>Local capacity</span></div>
+              <div class='mb-2'>Is there capacity and capability to admit a child/young person of this age?</div>
+              <div class='d-flex gap-2 flex-wrap'>
+                <button class='btn btn-primary' data-next='inpatient_ward'>Yes</button>
+                <button class='btn btn-outline-primary' data-next='transfer'>No</button>
+              </div>
+            </div>`, buttons: []
+        },
+
+        {
+          id: 'lvl2', title: 'Level 2', instruction: 'Level 2 Content.', description: `
+            <div class='decision-callout mt-1'>
+              <div class='d-flex align-items-center justify-content-between flex-wrap gap-2 mb-1'><span class='title'>Decision point</span><span class='hint'>Local capacity</span></div>
+              <div class='mb-2'>Is there capacity and capability to admit a child/young person of this age?</div>
+              <div class='d-flex gap-2 flex-wrap'>
+                <button class='btn btn-primary' data-next='inpatient_icu'>Yes</button>
+                <button class='btn btn-outline-primary' data-next='transfer'>No</button>
+              </div>
+            </div>`, buttons: []
+        },
+
+        {
+          id: 'lvl3', title: 'Level 3', instruction: 'Content — Require ongoing resuscitation.', description: `
+            <div class='decision-callout mt-1'>
+              <div class='d-flex align-items-center justify-content-between flex-wrap gap-2 mb-1'><span class='title'>Decision point</span><span class='hint'>Emergency check</span></div>
+              <div class='mb-2'>Is there a life‑threatening emergency?</div>
+              <div class='d-flex gap-2 flex-wrap'>
+                <button class='btn btn-primary' data-next='lsi'>Yes</button>
+                <button class='btn btn-outline-primary' data-next='cap_lvl3'>No</button>
+              </div>
+            </div>`, buttons: []
+        },
+
+        {
+          id: 'cap_lvl3', title: 'Capacity for Level 3', instruction: 'Capacity for Level 3 content.', description: `
+            <div class='decision-callout mt-1'>
+              <div class='d-flex align-items-center justify-content-between flex-wrap gap-2 mb-1'><span class='title'>Decision point</span><span class='hint'>Local capacity</span></div>
+              <div class='mb-2'>Is there capacity and capability to admit a child/young person of this age?</div>
+              <div class='d-flex gap-2 flex-wrap'>
+                <button class='btn btn-primary' data-next='inpatient_icu'>Yes</button>
+                <button class='btn btn-outline-primary' data-next='transfer'>No</button>
+              </div>
+            </div>`, buttons: []
+        },
+
+        {
+          id: 'inpatient_icu',
+          title: 'Inpatient pathway: ICU/HDU care; possible intervention',
+          instruction: '<p>Admission to ICU can be safely based on hemodynamic parameters rather than grade.</p><p>Group 2 and 3 should initially be cared for in a high dependency or ICU environment.</p><p>Away from Paediatric Centres, ICU/HDU care may be assisted by accessing the <span class="popup-link" data-popup="virtual_trauma_ward_round">Virtual Trauma Ward Round</span>.</p>',
+          description: '<p>ICU admission is indicated if the child/young person has required resuscitation. This should be in a Regional, Metropolitan Adult or Paediatric Trauma Centre, depending on the patient’s age and the local capacity and capability.</p><p>Away from Paediatric Trauma Centres, it is also pragmatic to initially manage those with Grade 4 and 5 injury who are stable, in an ICU or HDU setting.</p><h6>MANAGEMENT IN ICU/HDU</h6><ul><li>Bed rest until the vital signs are normal</li><li>Nil by mouth until vital signs and Hb are stable</li><li>Assess pain hourly. Analgesia – simple analgesia +/- oxycodone (Low grade injuries) +/- NCA/PCA (high grade/other injuries)</li><li>Repeat Hb every 6 hours or as indicated until vital signs are normal and Hb stable</li><li>Provide information sheet to family: LINK: <a href="https://www.google.com" target="_blank" rel="noopener">Information sheet</a></li></ul><p>Management may be assisted by accessing the <span class="popup-link" data-popup="virtual_trauma_ward_round">Virtual Trauma Ward Round</span>.</p><p>If the child fails to stabilise or signs of ongoing bleeding persist, intervention may be required. This is rare.</p><h6>Surgery (<span class="popup-link" data-popup="surgery_principles">details</span>)</h6><h6>Interventional radiology (<span class="popup-link" data-popup="interventional_radiology">details</span>)</h6>',
+          buttons: [{ label: 'Next — Inpatient pathway ward based', next: 'inpatient_ward' }]
+        },
+
+        {
+          id: 'inpatient_ward',
+          title: 'Inpatient pathway — ward based',
+          instruction: '<p>Admission to the ward can be safely based on hemodynamic parameters rather than grade.</p><p>Group 1 can safely be managed on the ward.</p><p>At a Paediatric Trauma Centre, all stable patients can be managed on the ward, regardless of grade.</p><p>Children who were initially managed in ICU can be stepped down to the ward once stable.</p>',
+          description: '<h6>MANAGEMENT ON THE WARD</h6><ul><li>Mobilise to the bathroom and as tolerated depending on pain and other injuries</li><li>Monitor</li><li>Obs second hourly first 24 hours, then 4th hourly</li><li>Diet as tolerated</li><li>Assess pain every 2–4 hours. Analgesia – simple analgesia +/- oxycodone (Low grade) +/- NCA/PCA (high grade/other injuries)</li><li>Repeat Hb every 6–8 hours or as clinically indicated until Hb stable</li><li>Tertiary survey after 24 hours LINK: <a href="https://www.rch.org.au/clinicalguide/guideline_index/Trauma__Tertiary_Survey/" target="_blank" rel="noopener">Trauma Tertiary Survey - Paediatrics (RCH)</a></li><li>Consider stool softener</li><li>Chest Physiotherapy</li><li>If not already provided: LINK: Provide information sheet to family</li><li>Social work</li><li>Escalate care as per your local LINK <a href="https://resources.schn.health.nsw.gov.au/policies/policies/pdf/2013-7058.pdf" target="_blank" rel="noopener">Between the Flags - Clinical Emergency Response System (CERS)</a></li><li>Management on the ward may be assisted by <span class="popup-link" data-popup="virtual_trauma_ward_round">Virtual Trauma Ward Round</span></li></ul>',
+          buttons: [{ label: 'Next — Discharge', next: 'discharge' }]
+        },
+
+        {
+          id: 'transfer',
+          title: 'Transfer',
+          instruction: '<p>Transport and retrieval services (NETS, NSW Ambulance), LHD virtual care and Paediatric Major Trauma Centres are available to:</p><ul><li>Provide time-critical virtual support while you manage the injured child</li><li>Assist with on-the-ground decision making about management and transfer</li><li>Plan for transfer</li></ul><p>Not every patient needs to be transferred — these services are advice lines as well.</p>',
+          description: '<p><strong>GOAL:</strong> Call early for advice and support</p><ul><li><a href="https://nswhealth.sharepoint.com/sites/SCHN-NETSINTRANET" target="_blank" rel="noopener">NETS – Clinical Hub – Home</a> (1300 362 500) to access the virtual paediatric trauma team, assistance with resuscitation and early management, and to discuss transfer options</li><li>For <span class="popup-link" data-popup="group1">Group 1</span> children with high-grade injuries; or <span class="popup-link" data-popup="group23">Group 2 and 3</span> children; or where other significant concerns exist</li><li><a href="https://www.seslhd.health.nsw.gov.au/sites/default/files/groups/StGTrauma/Policies/CTC4225-PATCH-FlowChart.pdf" target="_blank" rel="noopener">PATCH: Paediatric Acute Trauma Care Hotline (SCHN)</a> — call <span class="popup-link" data-popup="patch">PATCH</span></li><li>or LHD Virtual Care (<span class="popup-link" data-popup="lhd_virtual_care">details</span>)</li><li>For Group 1 children with minimal signs but a <span class="popup-link" data-popup="concerning_mechanism">concerning mechanism</span></li><li>Use <span class="popup-link" data-popup="isbar">ISBAR</span> to structure your conversation</li><li>This Trauma Referral form (<a href="https://www.google.com" target="_blank" rel="noopener">link</a>) may help you gather the information needed</li></ul><h6>Further references and resources</h6><ul><li><a href="https://resources.schn.health.nsw.gov.au/policies/policies/pdf/2020-199.pdf" target="_blank" rel="noopener">SCHN Paediatric Inter-Hospital Trauma Transfer Practice Guideline</a></li><li><a href="https://www.seslhd.health.nsw.gov.au/sites/default/files/groups/StGTrauma/Policies/CTC4225-PATCH-FlowChart.pdf" target="_blank" rel="noopener">PATCH: Paediatric Acute Trauma Care Hotline (SCHN) – Flowchart</a></li><li><a href="https://aci.health.nsw.gov.au/__data/assets/pdf_file/0007/560257/ACI-ITIM-NSW-inter-hospital-major-trauma-transfer-interim-guideline.pdf" target="_blank" rel="noopener">NSW Inter-Hospital Major Trauma Transfer (ITIM)</a></li><li><a href="https://aci.health.nsw.gov.au/__data/assets/pdf_file/0007/560257/ACI-ITIM-NSW-inter-hospital-major-trauma-transfer-interim-guideline.pdf#page=4" target="_blank" rel="noopener">NSW Inter-Hospital Major Trauma Transfer Algorithm (ITIM)</a></li></ul>',
+          buttons: [{ label: 'End', next: '__reset__' }]
+        },
+
+        {
+          id: 'discharge',
+          title: 'Discharge',
+          instruction: '<p>Start discharge planning early.</p>',
+          description: '<ul><li>Rest</li><li>Pain Relief</li><li>The risk of late bleeding is low but never zero</li></ul><p>Circle-able grade.</p><h6>INSTRUCTIONS</h6><ul><li>What to expect</li><li>What to do when you get home</li><li>What to do when to come back</li><li>Name of contact person: Trauma CNC or Liaison</li><li>Has my GP been sent my DC</li><li>Medical Certificate</li></ul><h6>RESOURCES</h6><ul><li>Discharge checklist for staff</li><li>Discharge information sheet for families</li><li>LINK: <a href="https://www.google.com" target="_blank" rel="noopener">discharge instructions</a></li><li>LINK: <a href="https://www.google.com" target="_blank" rel="noopener">discharge information sheet</a></li><li>DC check list for the team</li></ul>',
+          buttons: [{ label: 'End', next: '__reset__' }]
+        }
+      ]
+    };
+
+    const $ = (s, r = document) => r.querySelector(s); const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+    const state = { currentId: 'start', audit: [], history: [] };
+
+    function stepById(id) { return RULES.steps.find(s => s.id === id); }
+
+    function enhanceExternalLinks(root) {
+      if (!root) return; const anchors = root.querySelectorAll('a[href^="http"], a[target="_blank"]');
+      anchors.forEach(a => { if (a.dataset.enhanced === '1') return; a.setAttribute('target', '_blank'); a.setAttribute('rel', 'noopener'); if (!a.getAttribute('title')) a.setAttribute('title', 'Opens in a new tab'); a.setAttribute('data-bs-toggle', 'tooltip'); const sr = document.createElement('span'); sr.className = 'sr-only'; sr.textContent = ' (opens in a new tab, external link)'; const sup = document.createElement('sup'); sup.className = 'ext-indicator'; sup.setAttribute('aria-hidden', 'true'); sup.textContent = '↗'; a.appendChild(sr); a.appendChild(sup); a.dataset.enhanced = '1'; a.addEventListener('click', () => { pushAudit(stepById(state.currentId).title, 'Opened external link: ' + (a.innerText || 'link')); }); }); if (window.bootstrap && window.bootstrap.Tooltip) { [...root.querySelectorAll('a[data-bs-toggle="tooltip"]')].forEach(el => { try { new window.bootstrap.Tooltip(el); } catch (e) { } }); }
+    }
+
+    function renderStep() {
+      const s = stepById(state.currentId) || stepById('start');
+      const extURL = RULES.resources.stepExternal[s.id];
+      const hasURL = !!(extURL && typeof extURL === 'string' && extURL.trim() && extURL !== '#');
+      const toolTip = hasURL ? 'Open step guidance' : 'No link available';
+      const btnsData = [...(s.buttons || []), ...(s.id !== 'start' ? [{ label: 'Back', next: '__back__' }] : [])];
+      const btnsHTML = btnsData.map(b => `<button class="btn ${String(b.label).toLowerCase().includes('back') ? 'btn-outline-secondary' : 'btn-primary'} me-2" data-next="${b.next}">${b.label}</button>`).join('');
+
+      $('#step-container').innerHTML = `<div class='card-step p-3 p-md-4'>
+        <div class='step-card-header mb-2'>
+          <h2 class='h5 mb-0'>${s.title}</h2>
+          <button class='step-link-btn' ${hasURL ? '' : 'disabled'} data-step-link='${hasURL ? extURL : ''}' aria-label='Open guidance for ${s.title}' data-bs-toggle='tooltip' data-bs-placement='left' title='${toolTip}'>${iconConsultingSVG()}</button>
+        </div>
+        <div class='alert alert-instruction mb-2'>${s.instruction}</div>
+        ${s.description ? `<div class='mt-2'>${s.description}</div>` : ''}
+        <div class='d-flex justify-content-end mt-4'>${btnsHTML}</div>
+      </div>`;
+
+      const tipBtn = $('#step-container .step-link-btn');
+      if (tipBtn && window.bootstrap && window.bootstrap.Tooltip) { new window.bootstrap.Tooltip(tipBtn); }
+      if (hasURL && tipBtn) { tipBtn.addEventListener('click', () => { pushAudit(s.title, 'Opened guidance'); window.open(extURL, '_blank', 'noopener'); }); }
+
+      $$('#step-container [data-next]').forEach(b => b.addEventListener('click', () => {
+        const nxt = b.getAttribute('data-next'); const label = b.textContent; if (!nxt) return;
+        if (nxt === '__reset__') { pushAudit(s.title, label); state.audit = []; state.history = []; state.currentId = 'start'; renderStep(); renderAudit(); return; }
+        if (nxt === '__back__') { pushAudit(s.title, 'Back'); const prev = state.history.pop(); state.currentId = prev || 'start'; renderStep(); renderAudit(); return; }
+        pushAudit(s.title, label); state.history.push(state.currentId); state.currentId = nxt; renderStep(); renderAudit();
+      }));
+
+      $$('#step-container [data-popup]').forEach(el => el.addEventListener('click', () => openPopup(el.getAttribute('data-popup'))));
+      enhanceExternalLinks($('#step-container'));
+    }
+
+    function openPopup(key) {
+      const p = RULES.resources.popups[key]; if (!p) return; $('#modalTitle').textContent = p.title; $('#modalBody').innerHTML = p.body; const modalEl = document.getElementById('modalPopup'); if (window.bootstrap && window.bootstrap.Modal && modalEl) { window.bootstrap.Modal.getOrCreateInstance(modalEl).show(); } setTimeout(() => enhanceExternalLinks($('#modalBody')), 0);
+    }
+
+    function pushAudit(t, l) { state.audit.push({ stepId: state.currentId, title: t, label: l, ts: Date.now() }); renderAudit(); }
+    function renderAudit() { $('#audit-render').innerHTML = state.audit.map(e => `<div>${e.title} – <span class='muted'>${e.label}</span></div>`).join('') || '<div class="muted">Started · Session initialised</div>'; }
+
+    function init() { try { renderStep(); } catch (e) { const c = document.getElementById('step-container'); if (c) { c.innerHTML = `<div class='alert alert-danger'>Init error: ${e.message || e}</div>`; } } }
+    if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', init); } else { init(); }
+
+    const resetBtn = document.getElementById('btn-reset'); if (resetBtn) { resetBtn.addEventListener('click', () => { state.audit = []; state.history = []; state.currentId = 'start'; renderStep(); renderAudit(); }); }
+  </script>
+</body>
+
+</html>
