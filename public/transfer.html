@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang='en'>
+
+<head>
+    <meta charset='utf-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <title>Transfer</title>
+    <link href='https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css' rel='stylesheet'>
+    <style>
+        :root {
+            --callout-bg: #e9f3ff;
+            /* light blue */
+            --callout-br: #cfe2ff;
+            /* border blue */
+            --ink: #0b1726;
+            /* dark text */
+        }
+
+        body {
+            background: #ffffff;
+            color: var(--ink);
+        }
+
+        .page-wrap {
+            max-width: 900px;
+            margin-inline: auto;
+            padding: 32px 16px 64px;
+        }
+
+        h1.page-title {
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: 0.2px;
+            margin-bottom: 20px;
+        }
+
+        .callout {
+            background: var(--callout-bg);
+            border: 1px solid var(--callout-br);
+            border-radius: 12px;
+            padding: 20px 22px;
+            box-shadow: 0 1px 0 rgba(0, 0, 0, 0.02);
+        }
+
+        .callout p {
+            margin-bottom: 0.75rem;
+        }
+
+        .callout ul {
+            margin: 0 0 0.75rem 1.25rem;
+        }
+
+        .section {
+            margin-top: 18px;
+        }
+
+        .section strong {
+            font-weight: 700;
+        }
+
+        .bullet-tight li {
+            margin-bottom: 6px;
+        }
+
+        a {
+            text-decoration: underline;
+        }
+
+        .muted {
+            color: #555;
+        }
+    </style>
+</head>
+
+<body>
+    <main class='page-wrap'>
+        <!-- Title -->
+        <h1 class='page-title'>Call for advice or discuss transfer</h1>
+
+        <!-- Blue info box -->
+        <section class='callout mb-3'>
+            <p class='mb-3'>
+                Transport and retrieval services (NETS, NSW Ambulance), LHD virtual care and Paediatric Major Trauma
+                Centres are available to:
+            </p>
+            <ul>
+                <li>Provide time-critical virtual support while you manage the injured child</li>
+                <li>Assist with on-the-ground decision making about management and transfer</li>
+                <li>Plan for transfer</li>
+            </ul>
+            <p class='mb-0'><em>Not every patient needs to be transferred — these services are advice lines as
+                    well.</em></p>
+        </section>
+
+        <!-- Goal & links list -->
+        <section class='section'>
+            <p class='mb-2'><strong>GOAL:</strong> Call early for advice and support</p>
+            <ul class='bullet-tight'>
+                <li>
+                    <a href='https://nswhealth.sharepoint.com/sites/SCHN-NETSINTRANET' target='_blank'
+                        rel='noopener'>NETS – Clinical Hub – Home</a>
+                    (<span class='muted'>1300 362 500</span>) to access the virtual paediatric trauma team, assistance
+                    with resuscitation and early management, and to discuss transfer options
+                </li>
+                <li>
+                    For <a href='#' data-popup='group1' class='fw-bold link-primary'>Group 1</a> children with
+                    high-grade injuries; or
+                    <a href='#' data-popup='group23' class='fw-bold link-primary'>Group 2 and 3</a> children; or where
+                    other significant concerns exist
+                </li>
+                <li>
+                    <a href='#' data-popup='patch' class='fw-bold link-primary'>PATCH</a>: Paediatric Acute Trauma Care
+                    Hotline (SCHN)
+                    <a href='https://www.seslhd.health.nsw.gov.au/sites/default/files/groups/StGTrauma/Policies/CTC4225-PATCH-FlowChart.pdf'
+                        target='_blank' rel='noopener' class='ms-1'>(flowchart)</a>
+                </li>
+                <li>
+                    or LHD Virtual Care (<a href='#' data-popup='lhd' class='fw-bold link-primary'>details</a>)
+                </li>
+                <li>
+                    For Group 1 children with minimal signs but a <a href='#' data-popup='mechanism'
+                        class='fw-bold link-primary'>concerning mechanism</a>
+                </li>
+            </ul>
+        </section>
+
+        <!-- References -->
+        <section class='section'>
+            <p class='mb-1'><strong>References & resources</strong></p>
+            <ul class='bullet-tight'>
+                <li><a href='https://resources.schn.health.nsw.gov.au/policies/policies/pdf/2020-199.pdf'
+                        target='_blank' rel='noopener'>SCHN Paediatric Inter‑Hospital Trauma Transfer Practice Guideline
+                        (PDF)</a></li>
+                <li><a href='https://aci.health.nsw.gov.au/__data/assets/pdf_file/0007/560257/ACI-ITIM-NSW-inter-hospital-major-trauma-transfer-interim-guideline.pdf'
+                        target='_blank' rel='noopener'>NSW Inter‑Hospital Major Trauma Transfer (ITIM) Interim Guideline
+                        (PDF)</a></li>
+                <li><a href='https://aci.health.nsw.gov.au/__data/assets/pdf_file/0007/560257/ACI-ITIM-NSW-inter-hospital-major-trauma-transfer-interim-guideline.pdf#page=4'
+                        target='_blank' rel='noopener'>NSW Inter‑Hospital Major Trauma Transfer Algorithm (PDF, page
+                        4)</a></li>
+            </ul>
+        </section>
+    </main>
+
+    <!-- Single reusable modal -->
+    <div class='modal fade' id='modalPopup' tabindex='-1' aria-hidden='true'>
+        <div class='modal-dialog modal-lg modal-dialog-scrollable'>
+            <div class='modal-content'>
+                <div class='modal-header'>
+                    <h5 class='modal-title' id='modalTitle'>Details</h5>
+                    <button type='button' class='btn-close' data-bs-dismiss='modal' aria-label='Close'></button>
+                </div>
+                <div class='modal-body' id='modalBody'></div>
+            </div>
+        </div>
+    </div>
+
+    <script src='https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js'></script>
+    <script>
+        // Map keys to modal content
+        const popupContent = {
+            group1: {
+                title: 'Group 1',
+                body: "<p class='mb-0'><strong>GROUP 1:</strong> Has never had signs of bleeding and remains haemodynamically stable.</p>"
+            },
+            group23: {
+                title: 'Group 2 and 3',
+                body: "<p><strong>GROUP 2:</strong> Did have signs of bleeding and required resuscitation but now remains haemodynamically stable.</p><p class='mb-0'><strong>GROUP 3:</strong> There is concern about ongoing bleeding with the need for ongoing resuscitation.</p>"
+            },
+            mechanism: {
+                title: 'Concerning mechanism',
+                body: "<p class='mb-1'><strong>GROUP 1:</strong> Has never had signs of bleeding and remains haemodynamically stable.</p><p class='mb-1'><strong>GROUP 2:</strong> Did have signs of bleeding and required resuscitation but now remains haemodynamically stable.</p><p class='mb-0'><strong>GROUP 3:</strong> There is concern about ongoing bleeding with the need for ongoing resuscitation.</p>"
+            },
+            lhd: {
+                title: 'LHD Virtual Care (details)',
+                body: "<p class='mb-2'>Use for time‑critical discussion and transfer planning when local escalation pathways indicate virtual support is appropriate.</p><p class='mb-0'>Coordinate with NETS / PMTC as required for transfer planning and decision support.</p>"
+            },
+            patch: {
+                title: 'PATCH — Paediatric Acute Trauma Care Hotline',
+                body: "<p class='mb-2'><strong>PATCH 13004 TRAUMA</strong></p><p class='mb-2'>Use for time‑critical discussion and transfer planning with SCHN. Connects you to senior paediatric trauma advice while ongoing management is underway.</p><p class='mb-0'>See the <a href='https://www.seslhd.health.nsw.gov.au/sites/default/files/groups/StGTrauma/Policies/CTC4225-PATCH-FlowChart.pdf' target='_blank' rel='noopener'>PATCH flowchart (PDF)</a> for call flow and criteria.</p>"
+            }
+        };
+
+        // Wire up links to the single modal
+        document.addEventListener('DOMContentLoaded', function () {
+            const modalEl = document.getElementById('modalPopup');
+            const titleEl = document.getElementById('modalTitle');
+            const bodyEl = document.getElementById('modalBody');
+            const modal = new bootstrap.Modal(modalEl);
+
+            document.querySelectorAll('[data-popup]').forEach(function (link) {
+                link.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const key = link.getAttribute('data-popup');
+                    const data = popupContent[key];
+                    if (data) {
+                        titleEl.textContent = data.title || 'Details';
+                        bodyEl.innerHTML = data.body || '';
+                        modal.show();
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>

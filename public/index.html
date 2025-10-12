@@ -209,34 +209,38 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script>
     function iconConsultingSVG() {
-      return '<svg class="step-link-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">\
+      return `<svg class="step-link-icon" viewBox="0 0 16 16" width="32" height="32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <path d="M8 1a5 5 0 0 0-5 5v1h1a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V6a6 6 0 1 1 12 0v6a2.5 2.5 0 0 1-2.5 2.5H9.366a1 1 0 0 1-.866.5h-1a1 1 0 1 1 0-2h1a1 1 0 0 1 .866.5H11.5A1.5 1.5 0 0 0 13 12h-1a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1h1V6a5 5 0 0 0-5-5" fill="#0a66ff"/>
+  </svg>`;
+    }
+
+    /* '<svg class="step-link-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">\
         <path d="M12 13c-4.418 0-8-2.686-8-6s3.582-6 8-6 8 2.686 8 6c0 1.88-.97 3.555-2.548 4.72L18 15l-3.28-1.64C13.84 13.79 12.95 14 12 14" stroke="#0a66ff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>\
         <circle cx="8.5" cy="7" r=".9" fill="#0a66ff"/><circle cx="12" cy="7" r=".9" fill="#0a66ff"/><circle cx="15.5" cy="7" r=".9" fill="#0a66ff"/>\
         <circle cx="6" cy="19" r="3" stroke="#0a66ff" stroke-width="1.5"/>\
         <path d="M6 16.5c1.5 0 3 .9 3 2.2V21H3v-2.3c0-1.3 1.5-2.2 3-2.2Z" fill="#e8f0ff" stroke="#0a66ff" stroke-width="1.5" stroke-linejoin="round"/>\
-      </svg>';
-    }
+      </svg>' */
 
     const RULES = {
       resources: {
         stepExternal: {
-          start: 'https://www.google.com',
-          prepare: 'https://www.google.com',
-          primary: 'https://www.google.com',
-          lsi: 'https://www.google.com',
-          provide_lsi: 'https://www.google.com',
-          secondary: 'https://www.google.com',
-          ct_criteria: 'https://www.google.com',
-          ct_avail: 'https://www.google.com',
-          ct_scan: 'https://www.google.com',
-          lvl1: 'https://www.google.com',
-          lvl2: 'https://www.google.com',
-          lvl3: 'https://www.google.com',
-          cap_lvl3: 'https://www.google.com',
-          inpatient_icu: 'https://www.google.com',
-          inpatient_ward: 'https://www.google.com',
-          transfer: 'https://www.google.com',
-          discharge: 'https://www.google.com'
+          start: 'transfer.html',
+          prepare: 'transfer.html',
+          primary: 'transfer.html',
+          lsi: 'transfer.html',
+          provide_lsi: 'transfer.html',
+          secondary: 'transfer.html',
+          ct_criteria: 'transfer.html',
+          ct_avail: 'transfer.html',
+          ct_scan: 'transfer.html',
+          lvl1: 'transfer.html',
+          lvl2: 'transfer.html',
+          lvl3: 'transfer.html',
+          cap_lvl3: 'transfer.html',
+          inpatient_icu: 'transfer.html',
+          inpatient_ward: 'transfer.html',
+          transfer: 'transfer.html',
+          discharge: 'transfer.html'
         },
         popups: {
 
@@ -440,6 +444,47 @@
           isbar: {
             title: 'ISBAR',
             body: '<p>Content to be added.</p>'
+          },
+
+          //Injury grading popups
+
+          clinical_groups: {
+            title: 'Clinical groups',
+            body: '<p><strong>GROUP 1</strong>: Has never had signs of bleeding and remains haemodynamically stable.</p><p><strong>GROUP 2</strong>: Did have signs of bleeding and required resuscitation but now remains haemodynamically stable.</p><p><strong>GROUP 3</strong>: There is concern about ongoing bleeding with the need for ongoing resuscitation.</p>'
+          },
+          haemodynamic_status: {
+            title: 'Haemodynamic status',
+            body: '<p><strong>Haemodynamic compromise</strong>: loss of enough circulating blood volume to cause physiological changes.</p><p>There is no single measure of haemodynamic compromise at any one point in time.</p><p>Frequent re-assessment of multiple parameters is essential, integrating clinical and haemodynamic parameters to detect subtle signs of haemodynamic compromise developing over time.</p><p><strong>Signs of haemodynamic compromise may include</strong>:</p><ul><li>Obvious route of blood loss (external/long bone fractures, intrathoracic clinically or seen on CXR, intraperitoneal seen on e-FAST, retroperitoneal, pelvic fracture). N.b., e-FAST to direct investigation and management in injured children is not validated but reference is included as it may be in use in non-paediatric centres.</li><li>Vital signs, colour</li><li>Respiratory rate, level of consciousness</li><li>Heart rate (although can be up due to pain and fear)</li><li>Central capillary refill</li><li>Blood pressure – falling blood pressure is a late sign of haemodynamic compromise and may signal imminent circulatory collapse</li></ul><p>Any recurrent haemodynamic compromise is likely to occur within a relatively short space of time, whereas lack of sustained Hb response to transfusion with no other signs of haemodynamic compromise may occur over 12–48 hours.</p><p>A drop in Hb of 5 g/L is expected if a crystalloid fluid bolus of 10–20 mL/kg has been given and does not necessarily represent ongoing bleeding.</p><p><strong>Trauma bloods</strong></p><ul><li>FBC</li><li>EUC</li><li>LFT’s</li><li>Lipase</li><li>Crossmatch/Group &amp; hold</li><li>Coagulation</li><li>Urinalysis</li></ul>'
+          },
+          resuscitation_requirements: {
+            title: 'Resuscitation requirements',
+            body: '<p>Content to be added.</p>'
+          },
+          radiological_grading: {
+            title: 'Radiological grading',
+            body: '<p>Content to be added.</p>'
+          },
+
+          //Grade 1,2,3 popups
+          patient_factors: {
+            title: 'Patient factors',
+            body: '<ul><li>Age</li><li>Injury group</li><li>Associated injuries</li><li>Other medical needs</li></ul>'
+          },
+          personnel: {
+            title: 'Personnel',
+            body: '<ul><li>Nursing capability</li><li>Surgeon capacity and capability and willing to admit +/- shared care</li><li>Paediatrician available for shared care as required</li><li>Anaesthetic staff capability</li><li>Available psychosocial support</li></ul>'
+          },
+          resources: {
+            title: 'Resources',
+            body: '<p>Content to be added.</p>'
+          },
+          ir_capacity: {
+            title: 'IR capacity',
+            body: '<p><strong>Angioembolisation principles.</strong></p><p>Less than 3% of children with blunt splenic injury receive angioembolisation, with most being done in adult trauma centres (Swendiman 2020).</p><p>Prophylactic angioembolisation is not recommended. CT finding of splenic injury grade/contrast blush/pseudoaneurysm are not indications for angioembolisation in the absence of evidence of ongoing bleeding.</p><p><strong>Consider angioembolisation for splenic injury if:</strong></p><ul><li>Expertise is available.</li><li>There is a lack of sustained Hb response to resuscitation (Group 3).</li><li>Ongoing intraabdominal bleeding from embolisable source is contributing to recurrent haemodynamic compromise despite resuscitation.</li><li>Child/young person can be rendered stable enough to go to the angio suite.</li></ul><p>Use Hybrid operating suite if available (find evidence).</p>'
+          },
+          virtual_ward_round: {
+            title: 'Virtual trauma ward round',
+            body: '<p>Content to be completed.</p>'
           }
 
         }//end popups
@@ -449,7 +494,7 @@
         {
           id: 'start', title: 'Child 0–16 with abdominal injury and suspected splenic trauma',
           instruction: 'The management of paediatric splenic injury: quick reference guide is an education tool and a practical guide to support clinicians managing a child or young person up to age 16 who is suspected of having a splenic injury.',
-          description: ('<p>This guide is intended for all healthcare workers who provide clinical care to children and young people who may have a splenic injury. It may be used wherever they may present or be transferred to in NSW and is particularly designed for clinicians working in regional or rural settings and/or clinicians who do not regularly manage injured children.</p><p>This quick reference guide is not intended to replace senior clinical decision-making. Any concerns should be escalated locally, and/or through communication channels recommended in the guideline.  It does not represent a systematic review of evidence; however, it provides links to various established clinical resources and high-level evidence where relevant.</p><p>Not all content mentioned in this resource is necessarily within a clinician’s scope of practice.</p><div class="alert alert-warning my-2"><strong>All clinicians should work within their scope of practice.</strong></div><h6 class="mt-2">Disclaimer</h6><p>These guidelines have been produced to guide clinical decision making for the medical, nursing and allied health staff of Perth Children\'s Hospital. They are not strict protocols, and they do not replace the judgement of a senior clinician. Clinical common-sense should be applied at all times. These clinical guidelines should never be relied on as a substitute for proper assessment with respect to the particular circumstances of each case and the needs of each patient. Clinicians should also consider the local skill level available and their local area policies before following any guideline.</p><p><span class="popup-link" data-popup="about_guide">About the guide</span></p><p><span class="popup-link" data-popup="about_paediatric_splenic_injury">About paediatric splenic injury</span></p>'),
+          description: ('<p>This guide is intended for all healthcare workers who provide clinical care to children and young people who may have a splenic injury. It may be used wherever they may present or be transferred to in NSW and is particularly designed for clinicians working in regional or rural settings and/or clinicians who do not regularly manage injured children.</p><p>This quick reference guide is not intended to replace senior clinical decision-making. Any concerns should be escalated locally, and/or through communication channels recommended in the guideline.  It does not represent a systematic review of evidence; however, it provides links to various established clinical resources and high-level evidence where relevant.</p><p>Not all content mentioned in this resource is necessarily within a clinician’s scope of practice.</p><div class="alert alert-warning my-2"><strong>All clinicians should work within their scope of practice.</strong></div><div class="alert alert-success my-2" ><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-headset" viewBox="0 0 16 16"><path d="M8 1a5 5 0 0 0-5 5v1h1a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V6a6 6 0 1 1 12 0v6a2.5 2.5 0 0 1-2.5 2.5H9.366a1 1 0 0 1-.866.5h-1a1 1 0 1 1 0-2h1a1 1 0 0 1 .866.5H11.5A1.5 1.5 0 0 0 13 12h-1a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1h1V6a5 5 0 0 0-5-5"/></svg> Click on this button on top right hand anytime you need to get support</div><h6 class="mt-2"><strong>Disclaimer</strong></h6><p>These guidelines have been produced to guide clinical decision making for the medical, nursing and allied health staff of Perth Children\'s Hospital. They are not strict protocols, and they do not replace the judgement of a senior clinician. Clinical common-sense should be applied at all times. These clinical guidelines should never be relied on as a substitute for proper assessment with respect to the particular circumstances of each case and the needs of each patient. Clinicians should also consider the local skill level available and their local area policies before following any guideline.</p><p><span class="popup-link" data-popup="about_guide">About the guide</span></p><p><span class="popup-link" data-popup="about_paediatric_splenic_injury">About paediatric splenic injury</span></p>'),
           buttons: [{ label: 'Start', next: 'prepare' }]
         },
 
@@ -514,7 +559,14 @@
         },
 
         {
-          id: 'provide_lsi', title: 'Provide Life Saving Intervention', instruction: 'Life Saving Intervention Content.', description: `
+          id: 'provide_lsi',
+          title: 'Provide Life Saving Intervention',
+          instruction: '<p>The need for life-saving abdominal surgery in paediatric trauma is extremely rare.</p><p>However, in the unlikely situation where the child is only transiently responding to resuscitation in the short term, or not responding at all, and the blood loss is thought to be intraabdominal, this may be required.</p><p>Priorities are:</p><ul><li>COMMUNICATION</li><li>ONGOING RESUSCITATION</li><li>STABILISING “DAMAGE CONTROL” OR DEFINATIVE CARE</li></ul>',
+          description: `
+
+          <p><strong>GOAL:</strong> provide stabilising care to children with life-threatening injuries</p><p><strong>COMMUNICATION</strong></p><p>Away from a trauma centre or if advice and/or retrieval is required, call <a href="https://nswhealth.sharepoint.com/sites/SCHN-NETSINTRANET" target="_blank" rel="noopener">NETS - Clinical Hub - Home</a> early for advice and support from the Virtual Paediatric Trauma Team.</p><p><strong>ONGOING RESUSCITATION</strong></p><ul><li>Control any other potential sources of haemorrhage</li><li>Activate the massive transfusion protocol and commence balanced component resuscitation</li><li><span class="popup-link" data-popup="paed_mtp_flowsheet">Paediatric massive transfusion flow sheet</span></li><li><a href="https://www.apls.org.au/algorithm-blood-fluids-trauma" target="_blank" rel="noopener">Massive Haemorrhage in Paediatric Trauma (APLS Algorithm)</a></li><li>If you don’t have blood products available, contact <a href="https://nswhealth.sharepoint.com/sites/SCHN-NETSINTRANET" target="_blank" rel="noopener">NETS - Clinical Hub - Home</a> for products to be brought with the retrieval team or LHD paramedics.</li></ul><p><strong>DAMAGE CONTROL OR DEFINITIVE CARE – <span class="popup-link" data-popup="surgery_principles">Surgery</span></strong></p><ul><li>Seek the advice and support of the virtual paediatric trauma team via <a href="https://nswhealth.sharepoint.com/sites/SCHN-NETSINTRANET" target="_blank" rel="noopener">NETS - Clinical Hub - Home</a></li><li>Mobilise local surgical, anaesthetic and operating theatre capability if available.</li><li>Together with the virtual paediatric trauma team:<ul><li>Assess whether urgent intervention is required and possible, with the support and advice from virtual paediatric trauma team</li><li>If intervention is required, and there is capacity to do so locally, go ahead with virtual paediatric trauma team advice and support as needed.</li></ul></li><li>If there is no capacity to intervene locally, or the child/young person can be made stable enough for transfer, arrange retrieval to your regional trauma centre or a paediatric trauma centre, depending on the age of the child, surgical capacity, distance and the advice from the virtual paediatric trauma team</li></ul><p><strong>DEFINATIVE CARE – </strong> <span class="popup-link" data-popup="interventional_radiology">Interventional radiology</span></p><p><strong>Further references and resources</strong></p><ul><li><a href="https://resources.schn.health.nsw.gov.au/policies/policies/pdf/2014-7000.pdf" target="_blank" rel="noopener">Massive Transfusion Protocol (MTP) – Paediatric</a></li></ul>
+
+
           <div class='decision-callout mt-3'>
             <div class='d-flex align-items-center justify-content-between flex-wrap gap-2 mb-1'>
               <span class='title'>Decision point</span>
@@ -539,10 +591,11 @@
 
             <div class='decision-callout mt-3'>
               <div class='d-flex align-items-center justify-content-between flex-wrap gap-2 mb-1'><span class='title'>Decision point</span><span class='hint'>Critical branch</span></div>
-              <div class='mb-2'>Is the child requiring ongoing resuscitation thus not stable for CT?</div>
+              <div class='mb-2'>Is the child stable for CT scan or unstable and requiring ongoing resuscitation?</div>
               <div class='d-flex gap-2 flex-wrap'>
-                <button class='btn btn-primary' data-next='lsi'>Yes, the child requires ongoing resuscitation</button>
-                <button class='btn btn-outline-primary' data-next='ct_criteria'>No, the child is stable for CT scan</button>
+                
+                <button class='btn btn-primary' data-next='ct_criteria'>Yes, the child is stable for CT scan</button>
+                <button class='btn btn-outline-primary' data-next='lsi'>No, the child requires ongoing resuscitation</button>
               </div>
             </div>`, buttons: []
         },
@@ -559,7 +612,7 @@
               <div class='mb-2'>Does the child meet CT scan criteria?</div>
               <div class='d-flex gap-2 flex-wrap'>
                 <button class='btn btn-primary' data-next='ct_avail'>Yes — meets criteria</button>
-                <button class='btn btn-outline-primary' data-next='ct_criteria'>No — does not meet criteria</button>
+                <button class='btn btn-outline-primary' data-next='transfer'>No — does not meet criteria</button>
               </div>
             </div>`, buttons: []
         },
@@ -577,20 +630,32 @@
         },
 
         {
-          id: 'ct_scan', title: 'Spleen injury grading', instruction: 'Grading splenic injury.', description: `
+          id: 'ct_scan',
+          title: 'Spleen injury grading',
+          instruction: '<p>A combination of clinical and radiological grading will guide management and transfer decisions.</p><p>Lower grade injuries, and stable children are extremely unlikely to require any intervention.</p><p>Higher grade injuries (4–5) or children who have had signs of bleeding also are very unlikely to require intervention but should be managed in a place that can provide it should it be needed.</p><p>It is very rare that children will have ongoing resuscitation requirements, but if they do, they may need intervention.</p>',
+          description: `
+
+            <p><span class="popup-link" data-popup="clinical_groups"><strong>Clinical groups</strong></span> are based on haemodynamic status and resuscitation requirements.</p><p><span class="popup-link" data-popup="radiological_grading"><strong>Radiological grading</strong></span>: based on CT scan findings.</p><h6>Combined clinical and radiological grouping</h6><div class="table-responsive"><table class="table table-bordered table-sm align-middle"><thead><tr><th></th><th>AAST</th><th><span class="popup-link" data-popup="haemodynamic_status"><strong>HAEMODYNAMIC STATUS</strong></span></th></tr></thead><tbody><tr><td>GROUP 1</td><td>1–3</td><td>Has never had signs of bleeding and remains haemodynamically stable</td></tr><tr><td>GROUP 2</td><td>4–5</td><td>Has never had signs of bleeding and remains haemodynamically stable</td></tr><tr><td></td><td>1–5</td><td>Did have signs of bleeding and required resuscitation but now remains haemodynamically stable</td></tr><tr><td>GROUP 3</td><td>1–5</td><td>There is concern about ongoing bleeding with the need for ongoing resuscitation</td></tr></tbody></table></div><h6>Further references and resources</h6><p>Kozar RA et al. (2018). Organ injury scaling 2018 update: Spleen, liver, and kidney. <em>J Trauma Acute Care Surg</em>; 85(6):1119–1122.</p>  
+
             <div class='decision-callout mt-1'>
               <div class='d-flex align-items-center justify-content-between flex-wrap gap-2 mb-1'><span class='title'>Decision point</span><span class='hint'>Injury grading</span></div>
               <div class='mb-2'>Is this a confirmed splenic injury, and what is the grade of injury?</div>
               <div class='d-flex gap-2 flex-wrap'>
-                <button class='btn btn-primary' data-next='lvl1'>Level 1</button>
-                <button class='btn btn-outline-primary' data-next='lvl2'>Level 2</button>
-                <button class='btn btn-outline-primary' data-next='lvl3'>Level 3</button>
+                <button class='btn btn-primary' data-next='lvl1'>Group 1</button>
+                <button class='btn btn-outline-primary' data-next='lvl2'>Group 2</button>
+                <button class='btn btn-outline-primary' data-next='lvl3'>Group 3</button>
               </div>
             </div>`, buttons: []
         },
 
         {
-          id: 'lvl1', title: 'Level 1', instruction: 'Level 1 Content.', description: `
+          id: 'lvl1',
+          title: 'Group 1',
+          instruction: '<p>It is important to care for injured children and young people in facilities that have the appropriate resources and personnel, with a consideration of the family’s psychosocial needs.</p>',
+          description: `
+
+            <p><strong>Goal:</strong> Provide safe, evidence-based trauma care as close to home as possible.</p><h6>GROUP 1 require</h6><ul><li>Ward-based care</li><li>Shared care with a paediatrician in non-paediatric hospitals</li><li>Management of associated injuries</li><li>Psychosocial support for the child and family</li></ul><h6>GROUP 2 and 3 require care at a Regional, Major Adult or Paediatric Trauma Centre</h6><ul><li>Admission under a surgeon</li><li>Shared care with a paediatrician in non-paediatric hospitals</li><li>Initial care in a high dependency ward or intensive care</li><li>Access to IR or surgery if required</li><li>Management of associated injuries</li><li>Psychosocial support for the child and family</li></ul><h6>Factors that should be considered when deciding on the best place to care for the injured child and young person</h6><ul><li><span class="popup-link" data-popup="patient_factors">Patient factors</span></li><li><span class="popup-link" data-popup="personnel">Personnel </span>are available to care for the child/young person</li><li><span class="popup-link" data-popup="resources">Resources </span>are available</li></ul><h6>Resources/capability checklist</h6><ul><li>Hospital service level capability — LINK: <a href="https://www1.health.nsw.gov.au/pds/ActivePDSDocuments/GL2024_005.pdf" target="_blank" rel="noopener">Paediatric Service Capability (Paediatric Medicine and Surgery for Children)</a></li><li>HDU/ICU care capacity <span class="popup-link" data-popup="clinical_groups">(Group 2 and 3)</span></li><li>Ward based care capacity</li><li>Theatre capacity</li><li><span class="popup-link" data-popup="ir_capacity">IR capacity </span>(Group 2 and 3 only)</li><li><span class="popup-link" data-popup="virtual_ward_round">Virtual trauma ward round</span> can be accessed</li></ul><h6>Further references and resources</h6><ul><li>LINK: <a href="https://aci.health.nsw.gov.au/__data/assets/pdf_file/0012/947496/ACI-High-acuity-child-outside-a-tertiary-childrens-hospital-key-principles.pdf" target="_blank" rel="noopener">Managing a high acuity child outside of a tertiary children’s hospital</a></li><li>LINK: <a href="https://aci.health.nsw.gov.au/__data/assets/pdf_file/0012/947496/ACI-High-acuity-child-outside-a-tertiary-childrens-hospital-key-principles.pdf#page=8" target="_blank" rel="noopener">Criteria for paediatric patients requiring higher acuity care (ACI Algorithm)</a></li><li>LINK: <a href="https://aci.health.nsw.gov.au/__data/assets/pdf_file/0012/947496/ACI-High-acuity-child-outside-a-tertiary-childrens-hospital-key-principles.pdf#page=18" target="_blank" rel="noopener">Escalation procedure for deteriorating high acuity child (ACI Algorithm)</a></li><li>LINK: <a href="https://aci.health.nsw.gov.au/__data/assets/pdf_file/0012/947496/ACI-High-acuity-child-outside-a-tertiary-childrens-hospital-key-principles.pdf" target="_blank" rel="noopener">Local Resources to safely manage the high acuity child (ACI)</a></li></ul>
+
             <div class='decision-callout mt-1'>
               <div class='d-flex align-items-center justify-content-between flex-wrap gap-2 mb-1'><span class='title'>Decision point</span><span class='hint'>Local capacity</span></div>
               <div class='mb-2'>Is there capacity and capability to admit a child/young person of this age?</div>
@@ -602,7 +667,14 @@
         },
 
         {
-          id: 'lvl2', title: 'Level 2', instruction: 'Level 2 Content.', description: `
+          id: 'lvl2',
+          title: 'Group 2',
+          instruction: '<p>It is important to care for injured children and young people in facilities that have the appropriate resources and personnel, with a consideration of the family’s psychosocial needs.</p>',
+          description: `
+
+            <p><strong>Goal:</strong> Provide safe, evidence-based trauma care as close to home as possible.</p><h6>GROUP 1 require</h6><ul><li>Ward-based care</li><li>Shared care with a paediatrician in non-paediatric hospitals</li><li>Management of associated injuries</li><li>Psychosocial support for the child and family</li></ul><h6>GROUP 2 and 3 require care at a Regional, Major Adult or Paediatric Trauma Centre</h6><ul><li>Admission under a surgeon</li><li>Shared care with a paediatrician in non-paediatric hospitals</li><li>Initial care in a high dependency ward or intensive care</li><li>Access to IR or surgery if required</li><li>Management of associated injuries</li><li>Psychosocial support for the child and family</li></ul><h6>Factors that should be considered when deciding on the best place to care for the injured child and young person</h6><ul><li><span class="popup-link" data-popup="patient_factors">Patient factors</span></li><li><span class="popup-link" data-popup="personnel">Personnel </span>are available to care for the child/young person</li><li><span class="popup-link" data-popup="resources">Resources </span>are available</li></ul><h6>Resources/capability checklist</h6><ul><li>Hospital service level capability — LINK: <a href="https://www1.health.nsw.gov.au/pds/ActivePDSDocuments/GL2024_005.pdf" target="_blank" rel="noopener">Paediatric Service Capability (Paediatric Medicine and Surgery for Children)</a></li><li>HDU/ICU care capacity <span class="popup-link" data-popup="clinical_groups">(Group 2 and 3)</span></li><li>Ward based care capacity</li><li>Theatre capacity</li><li><span class="popup-link" data-popup="ir_capacity">IR capacity </span>(Group 2 and 3 only)</li><li><span class="popup-link" data-popup="virtual_ward_round">Virtual trauma ward round</span> can be accessed</li></ul><h6>Further references and resources</h6><ul><li>LINK: <a href="https://aci.health.nsw.gov.au/__data/assets/pdf_file/0012/947496/ACI-High-acuity-child-outside-a-tertiary-childrens-hospital-key-principles.pdf" target="_blank" rel="noopener">Managing a high acuity child outside of a tertiary children’s hospital</a></li><li>LINK: <a href="https://aci.health.nsw.gov.au/__data/assets/pdf_file/0012/947496/ACI-High-acuity-child-outside-a-tertiary-childrens-hospital-key-principles.pdf#page=8" target="_blank" rel="noopener">Criteria for paediatric patients requiring higher acuity care (ACI Algorithm)</a></li><li>LINK: <a href="https://aci.health.nsw.gov.au/__data/assets/pdf_file/0012/947496/ACI-High-acuity-child-outside-a-tertiary-childrens-hospital-key-principles.pdf#page=18" target="_blank" rel="noopener">Escalation procedure for deteriorating high acuity child (ACI Algorithm)</a></li><li>LINK: <a href="https://aci.health.nsw.gov.au/__data/assets/pdf_file/0012/947496/ACI-High-acuity-child-outside-a-tertiary-childrens-hospital-key-principles.pdf" target="_blank" rel="noopener">Local Resources to safely manage the high acuity child (ACI)</a></li></ul>
+
+
             <div class='decision-callout mt-1'>
               <div class='d-flex align-items-center justify-content-between flex-wrap gap-2 mb-1'><span class='title'>Decision point</span><span class='hint'>Local capacity</span></div>
               <div class='mb-2'>Is there capacity and capability to admit a child/young person of this age?</div>
@@ -614,7 +686,13 @@
         },
 
         {
-          id: 'lvl3', title: 'Level 3', instruction: 'Content — Require ongoing resuscitation.', description: `
+          id: 'lvl3', title: 'Group 3',
+          instruction: '<p>It is important to care for injured children and young people in facilities that have the appropriate resources and personnel, with a consideration of the family’s psychosocial needs.</p>',
+          description: `
+
+            <p><strong>Goal:</strong> Provide safe, evidence-based trauma care as close to home as possible.</p><h6>GROUP 1 require</h6><ul><li>Ward-based care</li><li>Shared care with a paediatrician in non-paediatric hospitals</li><li>Management of associated injuries</li><li>Psychosocial support for the child and family</li></ul><h6>GROUP 2 and 3 require care at a Regional, Major Adult or Paediatric Trauma Centre</h6><ul><li>Admission under a surgeon</li><li>Shared care with a paediatrician in non-paediatric hospitals</li><li>Initial care in a high dependency ward or intensive care</li><li>Access to IR or surgery if required</li><li>Management of associated injuries</li><li>Psychosocial support for the child and family</li></ul><h6>Factors that should be considered when deciding on the best place to care for the injured child and young person</h6><ul><li><span class="popup-link" data-popup="patient_factors">Patient factors</span></li><li><span class="popup-link" data-popup="personnel">Personnel </span>are available to care for the child/young person</li><li><span class="popup-link" data-popup="resources">Resources </span>are available</li></ul><h6>Resources/capability checklist</h6><ul><li>Hospital service level capability — LINK: <a href="https://www1.health.nsw.gov.au/pds/ActivePDSDocuments/GL2024_005.pdf" target="_blank" rel="noopener">Paediatric Service Capability (Paediatric Medicine and Surgery for Children)</a></li><li>HDU/ICU care capacity <span class="popup-link" data-popup="clinical_groups">(Group 2 and 3)</span></li><li>Ward based care capacity</li><li>Theatre capacity</li><li><span class="popup-link" data-popup="ir_capacity">IR capacity </span>(Group 2 and 3 only)</li><li><span class="popup-link" data-popup="virtual_ward_round">Virtual trauma ward round</span> can be accessed</li></ul><h6>Further references and resources</h6><ul><li>LINK: <a href="https://aci.health.nsw.gov.au/__data/assets/pdf_file/0012/947496/ACI-High-acuity-child-outside-a-tertiary-childrens-hospital-key-principles.pdf" target="_blank" rel="noopener">Managing a high acuity child outside of a tertiary children’s hospital</a></li><li>LINK: <a href="https://aci.health.nsw.gov.au/__data/assets/pdf_file/0012/947496/ACI-High-acuity-child-outside-a-tertiary-childrens-hospital-key-principles.pdf#page=8" target="_blank" rel="noopener">Criteria for paediatric patients requiring higher acuity care (ACI Algorithm)</a></li><li>LINK: <a href="https://aci.health.nsw.gov.au/__data/assets/pdf_file/0012/947496/ACI-High-acuity-child-outside-a-tertiary-childrens-hospital-key-principles.pdf#page=18" target="_blank" rel="noopener">Escalation procedure for deteriorating high acuity child (ACI Algorithm)</a></li><li>LINK: <a href="https://aci.health.nsw.gov.au/__data/assets/pdf_file/0012/947496/ACI-High-acuity-child-outside-a-tertiary-childrens-hospital-key-principles.pdf" target="_blank" rel="noopener">Local Resources to safely manage the high acuity child (ACI)</a></li></ul>
+
+
             <div class='decision-callout mt-1'>
               <div class='d-flex align-items-center justify-content-between flex-wrap gap-2 mb-1'><span class='title'>Decision point</span><span class='hint'>Emergency check</span></div>
               <div class='mb-2'>Is there a life‑threatening emergency?</div>
@@ -626,7 +704,11 @@
         },
 
         {
-          id: 'cap_lvl3', title: 'Capacity for Level 3', instruction: 'Capacity for Level 3 content.', description: `
+          id: 'cap_lvl3', title: 'Capacity for Group 3', instruction: 'Capacity for group 3', description: `
+
+            <p><strong>Goal:</strong> Provide safe, evidence-based trauma care as close to home as possible.</p><h6>GROUP 1 require</h6><ul><li>Ward-based care</li><li>Shared care with a paediatrician in non-paediatric hospitals</li><li>Management of associated injuries</li><li>Psychosocial support for the child and family</li></ul><h6>GROUP 2 and 3 require care at a Regional, Major Adult or Paediatric Trauma Centre</h6><ul><li>Admission under a surgeon</li><li>Shared care with a paediatrician in non-paediatric hospitals</li><li>Initial care in a high dependency ward or intensive care</li><li>Access to IR or surgery if required</li><li>Management of associated injuries</li><li>Psychosocial support for the child and family</li></ul><h6>Factors that should be considered when deciding on the best place to care for the injured child and young person</h6><ul><li><span class="popup-link" data-popup="patient_factors">Patient factors</span></li><li><span class="popup-link" data-popup="personnel">Personnel </span>are available to care for the child/young person</li><li><span class="popup-link" data-popup="resources">Resources </span>are available</li></ul><h6>Resources/capability checklist</h6><ul><li>Hospital service level capability — LINK: <a href="https://www1.health.nsw.gov.au/pds/ActivePDSDocuments/GL2024_005.pdf" target="_blank" rel="noopener">Paediatric Service Capability (Paediatric Medicine and Surgery for Children)</a></li><li>HDU/ICU care capacity <span class="popup-link" data-popup="clinical_groups">(Group 2 and 3)</span></li><li>Ward based care capacity</li><li>Theatre capacity</li><li><span class="popup-link" data-popup="ir_capacity">IR capacity </span>(Group 2 and 3 only)</li><li><span class="popup-link" data-popup="virtual_ward_round">Virtual trauma ward round</span> can be accessed</li></ul><h6>Further references and resources</h6><ul><li>LINK: <a href="https://aci.health.nsw.gov.au/__data/assets/pdf_file/0012/947496/ACI-High-acuity-child-outside-a-tertiary-childrens-hospital-key-principles.pdf" target="_blank" rel="noopener">Managing a high acuity child outside of a tertiary children’s hospital</a></li><li>LINK: <a href="https://aci.health.nsw.gov.au/__data/assets/pdf_file/0012/947496/ACI-High-acuity-child-outside-a-tertiary-childrens-hospital-key-principles.pdf#page=8" target="_blank" rel="noopener">Criteria for paediatric patients requiring higher acuity care (ACI Algorithm)</a></li><li>LINK: <a href="https://aci.health.nsw.gov.au/__data/assets/pdf_file/0012/947496/ACI-High-acuity-child-outside-a-tertiary-childrens-hospital-key-principles.pdf#page=18" target="_blank" rel="noopener">Escalation procedure for deteriorating high acuity child (ACI Algorithm)</a></li><li>LINK: <a href="https://aci.health.nsw.gov.au/__data/assets/pdf_file/0012/947496/ACI-High-acuity-child-outside-a-tertiary-childrens-hospital-key-principles.pdf" target="_blank" rel="noopener">Local Resources to safely manage the high acuity child (ACI)</a></li></ul>
+
+
             <div class='decision-callout mt-1'>
               <div class='d-flex align-items-center justify-content-between flex-wrap gap-2 mb-1'><span class='title'>Decision point</span><span class='hint'>Local capacity</span></div>
               <div class='mb-2'>Is there capacity and capability to admit a child/young person of this age?</div>
@@ -685,7 +767,7 @@
       const s = stepById(state.currentId) || stepById('start');
       const extURL = RULES.resources.stepExternal[s.id];
       const hasURL = !!(extURL && typeof extURL === 'string' && extURL.trim() && extURL !== '#');
-      const toolTip = hasURL ? 'Open step guidance' : 'No link available';
+      const toolTip = hasURL ? 'Open help page' : 'No link available';
       const btnsData = [...(s.buttons || []), ...(s.id !== 'start' ? [{ label: 'Back', next: '__back__' }] : [])];
       const btnsHTML = btnsData.map(b => `<button class="btn ${String(b.label).toLowerCase().includes('back') ? 'btn-outline-secondary' : 'btn-primary'} me-2" data-next="${b.next}">${b.label}</button>`).join('');
 
@@ -701,7 +783,12 @@
 
       const tipBtn = $('#step-container .step-link-btn');
       if (tipBtn && window.bootstrap && window.bootstrap.Tooltip) { new window.bootstrap.Tooltip(tipBtn); }
-      if (hasURL && tipBtn) { tipBtn.addEventListener('click', () => { pushAudit(s.title, 'Opened guidance'); window.open(extURL, '_blank', 'noopener'); }); }
+      if (hasURL && tipBtn) {
+        tipBtn.addEventListener('click', () => {
+          pushAudit(s.title, 'Opened guidance');
+          window.open(extURL, '_blank', 'noopener');
+        });
+      }
 
       $$('#step-container [data-next]').forEach(b => b.addEventListener('click', () => {
         const nxt = b.getAttribute('data-next'); const label = b.textContent; if (!nxt) return;
