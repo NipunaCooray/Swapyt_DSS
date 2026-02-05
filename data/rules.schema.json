@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": ["meta", "resources", "steps"],
+  "additionalProperties": false,
+  "properties": {
+    "meta": {
+      "type": "object",
+      "required": ["version", "lastReviewed", "approvedBy"],
+      "additionalProperties": false,
+      "properties": {
+        "version": { "type": "string" },
+        "lastReviewed": { "type": "string" },
+        "approvedBy": { "type": "string" }
+      }
+    },
+    "resources": {
+      "type": "object",
+      "required": ["stepExternal", "popups"],
+      "additionalProperties": false,
+      "properties": {
+        "stepExternal": {
+          "type": "object",
+          "additionalProperties": { "type": "string" }
+        },
+        "popups": {
+          "type": "object",
+          "additionalProperties": { "$ref": "#/definitions/popup" }
+        }
+      }
+    },
+    "steps": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/step" }
+    }
+  },
+  "definitions": {
+    "popup": {
+      "type": "object",
+      "required": ["title", "body"],
+      "additionalProperties": false,
+      "properties": {
+        "title": { "type": "string" },
+        "body": { "type": "string" }
+      }
+    },
+    "button": {
+      "type": "object",
+      "required": ["label", "next"],
+      "additionalProperties": false,
+      "properties": {
+        "label": { "type": "string" },
+        "next": { "type": "string" }
+      }
+    },
+    "step": {
+      "type": "object",
+      "required": ["id", "title", "instruction"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "instruction": { "type": "string" },
+        "description": { "type": "string" },
+        "buttons": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/button" }
+        }
+      }
+    }
+  }
+}
