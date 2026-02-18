@@ -16,7 +16,6 @@
       "cap_lvl3": "transfer.html",
       "inpatient_icu": "transfer.html",
       "inpatient_ward": "transfer.html",
-      "transfer": "transfer.html",
       "discharge": "transfer.html",
       "intervention_splenic": "transfer.html",
       "no_splenic_injury": "transfer.html"
@@ -188,7 +187,11 @@
       },
       "isbar": {
         "title": "ISBAR",
-        "body": "<p>Content to be added.</p>"
+        "body": "<p><img src=\"/assets/isbar.png\" alt=\"ISBAR handover tool\" class=\"img-fluid\" /></p>"
+      },
+      "paediatric_trauma_referrel_form": {
+        "title": "Paediatric Trauma Referrel Form",
+        "body": "<p><a href=\"/assets/paediatric-trauma-referral-form.docx\" target=\"_blank\" rel=\"noopener\" title=\"Opens in a new tab\">Download DOCX</a></p><object data=\"/assets/paediatric-trauma-referral-form.pdf\" type=\"application/pdf\" width=\"100%\" height=\"700\"><p>PDF preview is not available in this browser. <a href=\"/assets/paediatric-trauma-referral-form.pdf\" target=\"_blank\" rel=\"noopener\">Open the PDF</a>.</p></object>"
       },
       "clinical_groups": {
         "title": "Clinical groups",
@@ -245,6 +248,10 @@
       "group3": {
         "title": "Group 3",
         "body": "<p>AAST grade 1-5, with concern about ongoing bleeding with the need for ongoing resuscitation.</p><p>This is the rarest group (&lt;3%).</p><p>These children may require intervention, either with operation or angioembolization, depending on the rate of blood loss and the ability to achieve haemodynamic stability with resuscitation.</p>"
+      },
+      "imist": {
+        "title": "IMIST",
+        "body": "<p><img src=\"/assets/i-mist-ambo.jpeg\" alt=\"I-MIST AMBO handover tool\" class=\"img-fluid\" /></p>"
       }
     }
   },
@@ -400,9 +407,9 @@
     },
     {
       "id": "transfer",
-      "title": "Transfer",
-      "instruction": "<p>Transport and retrieval services (NETS, NSW Ambulance), LHD virtual care and Paediatric Major Trauma Centres are available to:</p><ul><li>Provide time-critical virtual support while you manage the injured child</li><li>Assist with on-the-ground decision making about management and transfer</li><li>Plan for transfer</li></ul><p>Not every patient needs to be transferred — these services are advice lines as well.</p>",
-      "description": "<p><strong>GOAL:</strong> Call early for advice and support</p><ul><li><a href=\"https://nswhealth.sharepoint.com/sites/SCHN-NETSINTRANET\" target=\"_blank\" rel=\"noopener\">NETS – Clinical Hub – Home</a> (1300 362 500) to access the virtual paediatric trauma team, assistance with resuscitation and early management, and to discuss transfer options</li><li>For <span class=\"popup-link\" data-popup=\"group1\">Group 1</span> children with high-grade injuries; or <span class=\"popup-link\" data-popup=\"group23\">Group 2 and 3</span> children; or where other significant concerns exist</li><li><a href=\"https://www.seslhd.health.nsw.gov.au/sites/default/files/groups/StGTrauma/Policies/CTC4225-PATCH-FlowChart.pdf\" target=\"_blank\" rel=\"noopener\">PATCH: Paediatric Acute Trauma Care Hotline (SCHN)</a> — call <span class=\"popup-link\" data-popup=\"patch\">PATCH</span></li><li>or LHD Virtual Care (<span class=\"popup-link\" data-popup=\"lhd_virtual_care\">details</span>)</li><li>For Group 1 children with minimal signs but a <span class=\"popup-link\" data-popup=\"concerning_mechanism\">concerning mechanism</span></li><li>Use <span class=\"popup-link\" data-popup=\"isbar\">ISBAR</span> to structure your conversation</li><li>This Trauma Referral form (<a href=\"https://www.google.com\" target=\"_blank\" rel=\"noopener\">link</a>) may help you gather the information needed</li></ul><h6>Further references and resources</h6><ul><li><a href=\"https://resources.schn.health.nsw.gov.au/policies/policies/pdf/2020-199.pdf\" target=\"_blank\" rel=\"noopener\">SCHN Paediatric Inter-Hospital Trauma Transfer Practice Guideline</a></li><li><a href=\"https://www.seslhd.health.nsw.gov.au/sites/default/files/groups/StGTrauma/Policies/CTC4225-PATCH-FlowChart.pdf\" target=\"_blank\" rel=\"noopener\">PATCH: Paediatric Acute Trauma Care Hotline (SCHN) – Flowchart</a></li><li><a href=\"https://aci.health.nsw.gov.au/__data/assets/pdf_file/0007/560257/ACI-ITIM-NSW-inter-hospital-major-trauma-transfer-interim-guideline.pdf\" target=\"_blank\" rel=\"noopener\">NSW Inter-Hospital Major Trauma Transfer (ITIM)</a></li><li><a href=\"https://aci.health.nsw.gov.au/__data/assets/pdf_file/0007/560257/ACI-ITIM-NSW-inter-hospital-major-trauma-transfer-interim-guideline.pdf#page=4\" target=\"_blank\" rel=\"noopener\">NSW Inter-Hospital Major Trauma Transfer Algorithm (ITIM)</a></li></ul>",
+      "title": "Call for advice or to discuss transfer",
+      "instruction": "<p class=\"mb-2\">Goal: GOAL: Call early for advice and support</p><ul class=\"mb-3\"><li>Obtain time critical virtual advice and support while you manage the injured child</li><li>Receive assistance with on the ground decision making about management best place of care for the child</li><li>Coordinate retrieval if required</li></ul><p class=\"mb-0\"><em>Not every patient needs to be transferred &ndash; these services are advice lines as well.</em></p>",
+      "description": "<p class=\"mb-3\">Other options for virtual support and decision making include</p><ul class=\"mb-4\"><li><span class=\"popup-link\" data-popup=\"patch\"><strong>PATCH</strong></span> LINK: <a href=\"https://www.seslhd.health.nsw.gov.au/sites/default/files/groups/StGTrauma/Policies/CTC4225-PATCH-FlowChart.pdf\" target=\"_blank\" rel=\"noopener\">PATCH: Paediatric Acute Trauma Care Hotline (SCHN)</a></li><li><span class=\"popup-link\" data-popup=\"lhd_virtual_care\"><strong>LHD Virtual care</strong></span></li></ul><p class=\"mb-3\">Use <span class=\"popup-link\" data-popup=\"imist\"><strong>IMIST</strong></span> or <span class=\"popup-link\" data-popup=\"isbar\"><strong>ISBAR</strong></span> to structure your conversation.</p><p class=\"mb-3\">This <span class=\"popup-link\" data-popup=\"paediatric_trauma_referrel_form\">Paediatric Trauma Referrel Form</span> may help you gather the information needed.</p><p class=\"mb-3\">This link can be provided to families for further information: NETS <a href=\"https://nets.schn.health.nsw.gov.au/\" target=\"_blank\" rel=\"noopener\">Parent handbook</a></p><p class=\"mb-4\">While waiting for retrieval, advice re interim care can be found here: LINK <a href=\"https://aci.health.nsw.gov.au/networks/icnsw/clinicians/managing-high-acuity-child-outside-of-hospital\" target=\"_blank\" rel=\"noopener\">Managing a high acuity child outside of a tertiary children&rsquo;s hospital: Key principles | For clinicians | Intensive Care NSW</a></p><h6 class=\"mt-4 mb-3\">Further references and resources</h6><ul class=\"mb-0\"><li>LINK: <a href=\"https://resources.schn.health.nsw.gov.au/policies/policies/pdf/2020-199.pdf\" target=\"_blank\" rel=\"noopener\">SCHN Paediatric Inter-Hospital Trauma Transfer Practice Guideline</a></li><li>LINK: <a href=\"https://www.seslhd.health.nsw.gov.au/sites/default/files/groups/StGTrauma/Policies/CTC4225-PATCH-FlowChart.pdf\" target=\"_blank\" rel=\"noopener\">PATCH: Paediatric Acute Trauma Care Hotline (SCHN)</a></li><li>LINK: <a href=\"https://aci.health.nsw.gov.au/__data/assets/pdf_file/0007/560257/ACI-ITIM-NSW-inter-hospital-major-trauma-transfer-interim-guideline.pdf\" target=\"_blank\" rel=\"noopener\">NSW Inter-Hospital Major Trauma Transfer (ITIM)</a></li><li>LINK: <a href=\"https://aci.health.nsw.gov.au/__data/assets/pdf_file/0007/560257/ACI-ITIM-NSW-inter-hospital-major-trauma-transfer-interim-guideline.pdf#page=4\" target=\"_blank\" rel=\"noopener\">NSW Inter-Hospital Major Trauma Transfer Algorithm (ITIM)</a></li></ul>",
       "buttons": [
         {
           "label": "End",
