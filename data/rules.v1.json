@@ -197,6 +197,18 @@
         "title": "Provide information sheet to family",
         "body": "<p>To be developed</p>"
       },
+      "discharge_check_list": {
+        "title": "Discharge check list",
+        "body": "<ul><li>Cleared for discharge by treating teams</li><li>Psychosocial needs anticipated and addressed<ul><li>Transport</li><li>Accommodation</li><li>Psychological support</li></ul></li><li>Discharge medications including pain relief and stool softeners</li><li>Discharge summary complete and sent to the GP or given to the family</li><li><span class=\"popup-link\" data-popup=\"discharge_information\">Discharge information</span> given to family</li><li>Provide injury prevention advice and information as appropriate</li></ul>"
+      },
+      "discharge_information": {
+        "title": "Discharge information",
+        "body": "<p><a href=\"/assets/discharge-instructions-after-splenic-injury.pdf\" target=\"_blank\" rel=\"noopener\" title=\"Opens in a new tab\">Download discharge instructions PDF</a></p><object data=\"/assets/discharge-instructions-after-splenic-injury.pdf\" type=\"application/pdf\" width=\"100%\" height=\"700\"><p>PDF preview is not available in this browser. <a href=\"/assets/discharge-instructions-after-splenic-injury.pdf\" target=\"_blank\" rel=\"noopener\">Open the PDF</a>.</p></object>"
+      },
+      "reimaging_paediatric_blunt_spleen_liver_injury": {
+        "title": "Reimaging in paediatric blunt splenic and liver injury",
+        "body": "<p><a href=\"/assets/reimaging-paediatric-blunt-spleen-liver-injury.pdf\" target=\"_blank\" rel=\"noopener\" title=\"Opens in a new tab\">Download PDF</a></p><object data=\"/assets/reimaging-paediatric-blunt-spleen-liver-injury.pdf\" type=\"application/pdf\" width=\"100%\" height=\"700\"><p>PDF preview is not available in this browser. <a href=\"/assets/reimaging-paediatric-blunt-spleen-liver-injury.pdf\" target=\"_blank\" rel=\"noopener\">Open the PDF</a>.</p></object>"
+      },
       "clinical_groups": {
         "title": "Clinical groups",
         "body": "<p><strong>GROUP 1</strong>: Has never had signs of bleeding and remains haemodynamically stable.</p><p><strong>GROUP 2</strong>: Did have signs of bleeding and required resuscitation but now remains haemodynamically stable.</p><p><strong>GROUP 3</strong>: There is concern about ongoing bleeding with the need for ongoing resuscitation.</p>"
@@ -394,9 +406,9 @@
     },
     {
       "id": "inpatient_ward",
-      "title": "Inpatient pathway — ward based",
-      "instruction": "<p>Admission to the ward can be safely based on hemodynamic parameters rather than grade.</p><p>Group 1 can safely be managed on the ward.</p><p>At a Paediatric Trauma Centre, all stable patients can be managed on the ward, regardless of grade.</p><p>Children who were initially managed in ICU can be stepped down to the ward once stable.</p>",
-      "description": "<h6>MANAGEMENT ON THE WARD</h6><ul><li>Mobilise to the bathroom and as tolerated depending on pain and other injuries</li><li>Monitor</li><li>Obs second hourly first 24 hours, then 4th hourly</li><li>Diet as tolerated</li><li>Assess pain every 2–4 hours. Analgesia – simple analgesia +/- oxycodone (Low grade) +/- NCA/PCA (high grade/other injuries)</li><li>Repeat Hb every 6–8 hours or as clinically indicated until Hb stable</li><li>Tertiary survey after 24 hours LINK: <a href=\"https://www.rch.org.au/clinicalguide/guideline_index/Trauma__Tertiary_Survey/\" target=\"_blank\" rel=\"noopener\">Trauma Tertiary Survey - Paediatrics (RCH)</a></li><li>Consider stool softener</li><li>Chest Physiotherapy</li><li>If not already provided: LINK: Provide information sheet to family</li><li>Social work</li><li>Escalate care as per your local LINK <a href=\"https://resources.schn.health.nsw.gov.au/policies/policies/pdf/2013-7058.pdf\" target=\"_blank\" rel=\"noopener\">Between the Flags - Clinical Emergency Response System (CERS)</a></li><li>Management on the ward may be assisted by <span class=\"popup-link\" data-popup=\"virtual_trauma_ward_round\">Virtual Trauma Ward Round</span></li></ul>",
+      "title": "Ward based care",
+      "instruction": "<p>Admission to the ward can be safely based on hemodynamic parameters rather than grade</p><p>Group 1 can safely be managed on the ward from admission.</p><p>At a Paediatric Trauma Centre, all stable patients can be managed on the ward, regardless of grade</p><p>Children who were initially managed in ICU can be stepped down to the ward once stable</p>",
+      "description": "<h6 class=\"mb-3\">MANAGEMENT ON THE WARD</h6><ul class=\"mb-4\"><li>Monitor</li><li>Observations second hourly first 24 hours, then 4<sup>th</sup> hourly</li><li>Repeat Hb every 6 -8 hours or as clinically indicated until Hb stable</li><li>Mobilise as tolerated depending on pain and other injuries</li><li>Diet as tolerated</li><li>Assess pain every 2-4 hours. <a href=\"https://www.rch.org.au/clinicalguide/guideline_index/Acute_pain_management/\" target=\"_blank\" rel=\"noopener\">Clinical Practice Guidelines: Acute pain management</a></li><li>Tertiary survey after 24 hours LINK: <a href=\"https://www.rch.org.au/clinicalguide/guideline_index/Trauma__Tertiary_Survey/\" target=\"_blank\" rel=\"noopener\">Trauma Tertiary Survey - Paediatrics (RCH)</a></li><li>Consider stool softener</li><li>Chest Physiotherapy</li><li>If not already provided: <span class=\"popup-link\" data-popup=\"provide_information_sheet_family\">Provide information sheet to family</span></li><li>Social work</li><li>Escalate care as per your local LINK <a href=\"https://resources.schn.health.nsw.gov.au/policies/policies/pdf/2013-7058.pdf\" target=\"_blank\" rel=\"noopener\">Between the Flags - Clinical Emergency Response System (CERS)</a></li></ul><div class=\"alert my-3\" style=\"background-color:#d7ecd7;border:1px solid #111827;color:#111827;\">Call NETS 1300 362 500 LINK <a href=\"https://nswhealth.sharepoint.com/sites/SCHN-NETSINTRANET\" target=\"_blank\" rel=\"noopener\">NETS - Clinical Hub - Home</a> to access the virtual paediatric trauma team, and obtain assistance with ongoing assessment and management.</div><p class=\"mb-0\">Management on the ward may be assisted by <span class=\"popup-link\" data-popup=\"virtual_trauma_ward_round\"><strong>Virtual Trauma Ward Round</strong></span></p>",
       "buttons": [
         {
           "label": "Next — Discharge",
@@ -418,9 +430,9 @@
     },
     {
       "id": "discharge",
-      "title": "Discharge",
-      "instruction": "<p>Start discharge planning early.</p>",
-      "description": "<ul><li>Rest</li><li>Pain Relief</li><li>The risk of late bleeding is low but never zero</li></ul><p>Circle-able grade.</p><h6>INSTRUCTIONS</h6><ul><li>What to expect</li><li>What to do when you get home</li><li>What to do when to come back</li><li>Name of contact person: Trauma CNC or Liaison</li><li>Has my GP been sent my DC</li><li>Medical Certificate</li></ul><h6>RESOURCES</h6><ul><li>Discharge checklist for staff</li><li>Discharge information sheet for families</li><li>LINK: <a href=\"https://www.google.com\" target=\"_blank\" rel=\"noopener\">discharge instructions</a></li><li>LINK: <a href=\"https://www.google.com\" target=\"_blank\" rel=\"noopener\">discharge information sheet</a></li><li>DC check list for the team</li></ul>",
+      "title": "Discharge and after care",
+      "instruction": "<p>Goal: provide family with information and safety netting prior to discharge</p>",
+      "description": "<p class=\"mb-3\">Families appreciate information at discharge and a follow up appointment</p><p class=\"mb-3\">Follow up imaging is guided by symptoms and the medical team.</p><p class=\"mb-3\"><strong>There is no evidence of any benefit in routine follow up imaging</strong></p><p class=\"mb-3\"><span class=\"popup-link\" data-popup=\"discharge_check_list\">Discharge check list</span></p><ul class=\"mb-4\"><li>Cleared for discharge by treating teams</li><li>Psychosocial needs anticipated and addressed<ul><li>Transport</li><li>Accommodation</li><li>Psychological support</li></ul></li><li>Discharge medications including pain relief and stool softeners</li><li>Discharge summary complete and sent to the GP or given to the family</li><li><span class=\"popup-link\" data-popup=\"discharge_information\">Discharge information</span> given to family</li><li>Provide injury prevention advice and information as appropriate</li></ul><h6 class=\"mb-3\">FURTHER RESOURCES</h6><p class=\"mb-0\"><span class=\"popup-link\" data-popup=\"reimaging_paediatric_blunt_spleen_liver_injury\">Reimaging in paediatric blunt splenic and liver injury</span></p>",
       "buttons": [
         {
           "label": "End",
