@@ -199,7 +199,7 @@
       },
       "discharge_check_list": {
         "title": "Discharge check list",
-        "body": "<ul><li>Cleared for discharge by treating teams</li><li>Psychosocial needs anticipated and addressed<ul><li>Transport</li><li>Accommodation</li><li>Psychological support</li></ul></li><li>Discharge medications including pain relief and stool softeners</li><li>Discharge summary complete and sent to the GP or given to the family</li><li><span class=\"popup-link\" data-popup=\"discharge_information\">Discharge information</span> given to family</li><li>Provide injury prevention advice and information as appropriate</li></ul>"
+        "body": "<p><a href=\"/assets/discharge-check-list.pdf\" target=\"_blank\" rel=\"noopener\" title=\"Opens in a new tab\">Download discharge check list PDF</a></p><object data=\"/assets/discharge-check-list.pdf\" type=\"application/pdf\" width=\"100%\" height=\"700\"><p>PDF preview is not available in this browser. <a href=\"/assets/discharge-check-list.pdf\" target=\"_blank\" rel=\"noopener\">Open the PDF</a>.</p></object>"
       },
       "discharge_information": {
         "title": "Discharge information",
