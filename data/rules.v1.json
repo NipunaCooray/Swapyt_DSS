@@ -35,7 +35,7 @@
       },
       "local_trauma_team": {
         "title": "Local trauma team",
-        "body": "<p>It is recommended that a trauma team for your context be identified. Suggested roles are contained in this link. In smaller centres a person may need to take on more than one role <a href=\"https://trauma.reach.vic.gov.au/guidelines/teamwork-and-communication/trauma-team-structure/\" target=\"_blank\" rel=\"noopener\" title=\"Opens in a new tab\">Trauma team structure | Victorian State Trauma System</a></p>"
+        "body": "<p>It is recommended that a trauma team for your context be identified. Suggested roles are contained in this link. In smaller centres a person may need to take on more than one role <a href=\"https://trauma.reach.vic.gov.au/guidelines/teamwork-and-communication/trauma-team-structure/\" target=\"_blank\" rel=\"noopener\" title=\"Opens in a new tab\">Trauma team structure | Victorian State Trauma System</a></p><p>If you don’t have a trauma team, consider calling</p><ul><li>Senior emergency department medical and nursing staff</li><li>Senior consultant in surgery, if available</li><li>Paediatrician</li><li>Senior consultant in anaesthetics</li><li>Radiology staff (radiographer)</li><li>Senior nursing administration.</li><li>Possibly required<ul><li>Operating theatre staff, if available</li><li>Interventional radiologists, if available</li></ul></li></ul>"
       },
       "alert_relevant_staff": {
         "title": "Alert relevant staff",
