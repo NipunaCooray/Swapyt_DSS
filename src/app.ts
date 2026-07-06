@@ -21,7 +21,7 @@ const $$ = (s: string, r: ParentNode | Document = document) => Array.from(r.quer
 const state: State = { currentId: 'start', audit: [], history: [] };
 
 function iconConsultingSVG() {
-  return `<svg class="step-link-icon" viewBox="0 0 16 16" width="32" height="32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+  return `<svg class="step-link-icon" viewBox="0 0 16 16" width="38" height="38" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
     <path d="M8 1a5 5 0 0 0-5 5v1h1a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V6a6 6 0 1 1 12 0v6a2.5 2.5 0 0 1-2.5 2.5H9.366a1 1 0 0 1-.866.5h-1a1 1 0 1 1 0-2h1a1 1 0 0 1 .866.5H11.5A1.5 1.5 0 0 0 13 12h-1a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1h1V6a5 5 0 0 0-5-5" fill="currentColor"/>
   </svg>`;
 }
@@ -72,7 +72,7 @@ function renderStep() {
   if (!s) return;
   const extURL = RULES.resources.stepExternal[s.id];
   const hasURL = !!(extURL && typeof extURL === 'string' && extURL.trim() && extURL !== '#');
-  const toolTip = hasURL ? 'Open help page' : 'No link available';
+  const toolTip = hasURL ? 'Call for support or to request transfer' : 'No link available';
   const btnsData = [...(s.id !== 'start' ? [{ label: 'Back', next: '__back__' }] : []), ...(s.buttons || [])];
   const btnsHTML = btnsData
     .map((b) => `<button class="btn ${String(b.label).toLowerCase().includes('back') ? 'btn-outline-secondary' : 'btn-primary'} me-2" data-next="${b.next}">${b.label}</button>`)
