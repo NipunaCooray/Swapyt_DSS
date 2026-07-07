@@ -203,7 +203,7 @@
       },
       "discharge_check_list": {
         "title": "Discharge check list",
-        "body": "<p><strong>COMMUNICATION</strong></p><ul><li>☐ Cleared for discharge by treating teams</li><li>☐ Check family feel ready for discharge</li><li>☐ Provide verbal discharge advice and safety netting</li><li>☐ Provide injury prevention advice and information as appropriate</li></ul><p><strong>DOCUMENTATION AND MEDICATIONS</strong></p><ul><li>☐ Discharge medications including pain relief and stool softeners</li><li>☐ Discharge summary complete and sent to the GP or given to the family</li><li>☐ Medical certificates for patient and carers</li><li>☐ Discharge information given to family</li></ul><p><strong>PSYCHOSOCIAL NEEDS anticipated and addressed</strong></p><ul><li>☐ Transport</li><li>☐ Accommodation</li><li>☐ Psychological support</li></ul><p><strong>FOLLOW UP APPOINTMENTS / ONGOING CARE</strong></p><ul><li>☐ Nurse phone call at 1-2 weeks</li><li>☐ Treating team follow up 2-6 weeks<ul><li>Telehealth</li><li>Face to face</li></ul></li><li>☐ Allied health follow up</li><li>☐ Follow up appointment with GP and with other specialists for associated injuries as required</li></ul>"
+        "body": "<p><a href=\"/assets/discharge-check-list.pdf\" target=\"_blank\" rel=\"noopener\" title=\"Opens in a new tab\">Open PDF in a new tab</a></p><object data=\"/assets/discharge-check-list.pdf\" type=\"application/pdf\" width=\"100%\" height=\"700\"><p>PDF preview is not available in this browser. <a href=\"/assets/discharge-check-list.pdf\" target=\"_blank\" rel=\"noopener\">Open the PDF</a>.</p></object>"
       },
       "discharge_information": {
         "title": "Discharge Instructions After a Splenic Injury",
