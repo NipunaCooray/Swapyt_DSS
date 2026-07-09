@@ -365,7 +365,7 @@
       "id": "no_splenic_injury",
       "title": "No splenic injury identified",
       "instruction": "<p>Goal: determine ongoing care based on other injuries and local capability.</p>",
-      "description": "<div class=\"text-center\"><p class=\"mb-2\">Manage as per guidelines for other injuries.</p><div style=\"color:#0b5f87;font-size:2.2rem;line-height:1;\">&#11015;</div><p class=\"mb-0\">Decide on place of care based on local resources and personnel.</p></div><div class=\"alert my-3\" style=\"background-color:#b7e1be;border:1px solid #111827;color:#111827;\">Call NETS 1300 362 500 LINK <a href=\"https://nswhealth.sharepoint.com/sites/SCHN-NETSINTRANET\" target=\"_blank\" rel=\"noopener\">NETS - Clinical Hub - Home</a> to access the virtual paediatric trauma team, obtain assistance with resuscitation and early management, and to discuss transfer options</div>",
+      "description": "<div class=\"text-center\"><p class=\"mb-2\">Manage as per guidelines for other injuries.</p><div style=\"color:#0b5f87;font-size:2.2rem;line-height:1;\">&#11015;</div><p class=\"mb-0\">Decide on place of care based on patient factors, local resources and personnel.</p></div><div class=\"alert my-3\" style=\"background-color:#b7e1be;border:1px solid #111827;color:#111827;\">Call NETS <strong>1300 362 500</strong> to access the virtual paediatric trauma team, obtain assistance with resuscitation and early management, and to discuss transfer options</div>",
       "buttons": [
         {
           "label": "End",
