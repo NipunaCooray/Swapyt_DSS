@@ -16,12 +16,19 @@ export interface StepButton {
   next: RuleId;
 }
 
+export interface FurtherResourceLink {
+  label: string;
+  url?: string;
+  popup?: string;
+}
+
 export interface Step {
   id: RuleId;
   title: string;
   instruction: string;
   description?: string;
   buttons?: StepButton[];
+  furtherResources?: FurtherResourceLink[];
 }
 
 export interface RuleResources {

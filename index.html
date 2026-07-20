@@ -237,6 +237,53 @@
       margin-left: .15em
     }
 
+    .further-resources {
+      border-top: 1px solid var(--line);
+      padding-top: .75rem;
+    }
+
+    .further-resources summary {
+      list-style: none;
+      cursor: pointer;
+      font-weight: 700;
+      color: var(--muted);
+      display: inline-flex;
+      align-items: center;
+      gap: .4em;
+    }
+
+    .further-resources summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .further-resources summary::before {
+      content: "";
+      width: .5em;
+      height: .5em;
+      border-right: 2px solid var(--muted);
+      border-bottom: 2px solid var(--muted);
+      transform: rotate(-45deg);
+      transition: transform .15s ease;
+    }
+
+    .further-resources[open] summary::before {
+      transform: rotate(45deg);
+    }
+
+    .further-resources summary:focus-visible {
+      outline: 2px solid var(--brand);
+      outline-offset: 2px;
+    }
+
+    .further-resources ul {
+      margin: .6rem 0 0;
+      padding-left: 1.25rem;
+    }
+
+    .further-resources li + li {
+      margin-top: .3rem;
+    }
+
     a {
       color: var(--teal);
     }

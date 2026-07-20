@@ -78,6 +78,19 @@ function renderStep() {
     .map((b) => `<button class="btn ${String(b.label).toLowerCase().includes('back') ? 'btn-outline-secondary' : 'btn-primary'} me-2" data-next="${b.next}">${b.label}</button>`)
     .join('');
 
+  const furtherResourcesHTML = s.furtherResources?.length
+    ? `<details class='further-resources mt-4'>
+        <summary>Further resources</summary>
+        <ul class='mb-0'>${s.furtherResources
+          .map((r) => {
+            if (r.popup) return `<li><span class="popup-link" data-popup="${r.popup}">${r.label}</span></li>`;
+            if (r.url) return `<li><a href="${r.url}" target="_blank" rel="noopener">${r.label}</a></li>`;
+            return `<li>${r.label}</li>`;
+          })
+          .join('')}</ul>
+      </details>`
+    : '';
+
   const stepContainer = $('#step-container');
   if (!stepContainer) return;
 
@@ -89,6 +102,7 @@ function renderStep() {
         <div class='alert alert-instruction mb-2'>${s.instruction}</div>
         ${s.description ? `<div class='mt-2'>${s.description}</div>` : ''}
         <div class='d-flex justify-content-end mt-4'>${btnsHTML}</div>
+        ${furtherResourcesHTML}
       </div>`;
 
   const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;

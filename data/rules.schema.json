@@ -53,6 +53,16 @@
         "next": { "type": "string" }
       }
     },
+    "furtherResourceLink": {
+      "type": "object",
+      "required": ["label"],
+      "additionalProperties": false,
+      "properties": {
+        "label": { "type": "string" },
+        "url": { "type": "string" },
+        "popup": { "type": "string" }
+      }
+    },
     "step": {
       "type": "object",
       "required": ["id", "title", "instruction"],
@@ -65,6 +75,10 @@
         "buttons": {
           "type": "array",
           "items": { "$ref": "#/definitions/button" }
+        },
+        "furtherResources": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/furtherResourceLink" }
         }
       }
     }
