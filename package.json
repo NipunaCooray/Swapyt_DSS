@@ -7,7 +7,9 @@
     "dev": "vite",
     "validate:rules": "node scripts/validate-rules.mjs",
     "build": "npm run validate:rules && tsc && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "deploy:beta": "npm run build && firebase deploy --only hosting:beta",
+    "deploy:prod": "npm run build && firebase deploy --only hosting:production"
   },
   "devDependencies": {
     "ajv": "^8.17.1",

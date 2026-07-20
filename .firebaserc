@@ -1,5 +1,18 @@
 {
   "projects": {
     "default": "swapyt-dst"
-  }
+  },
+  "targets": {
+    "swapyt-dst": {
+      "hosting": {
+        "production": [
+          "swapyt-dst"
+        ],
+        "beta": [
+          "swapyt-dst-beta"
+        ]
+      }
+    }
+  },
+  "etags": {}
 }
