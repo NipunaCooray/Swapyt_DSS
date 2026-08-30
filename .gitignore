@@ -21,3 +21,6 @@ build/
 
 # Cache files
 *.cache
+
+# Local guideline documents (top-level only)
+/guideline/

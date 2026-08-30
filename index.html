@@ -175,6 +175,44 @@
       text-decoration: underline;
     }
 
+    .start-popup-links {
+      list-style: none;
+      margin: .35rem 0 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: .2rem;
+    }
+
+    .start-popup-links li {
+      margin: 0;
+    }
+
+    .start-popup-links li + li {
+      border-top: 1px solid #d8e4f1;
+      padding-top: .2rem;
+    }
+
+    .start-popup-links .popup-link {
+      display: block;
+      line-height: 1.2;
+      padding: .35rem .5rem;
+      border-radius: .5rem;
+      font-weight: 700;
+    }
+
+    .start-popup-links .popup-link:hover {
+      text-decoration: none;
+      background: #e8f2fb;
+    }
+
+    .start-popup-links .popup-link:focus-visible {
+      outline: 2px solid var(--brand);
+      outline-offset: 1px;
+      text-decoration: underline;
+      background: #e8f2fb;
+    }
+
     .decision-callout {
       background: var(--callout-bg);
       border: 1px solid var(--callout-border);
