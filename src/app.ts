@@ -1,12 +1,7 @@
 import rulesJson from '../data/rules.v1.json';
-import type { Rules } from './types';
+import type { Rules, Step } from './types';
 
-type AuditEntry = {
-  stepId: string;
-  title: string;
-  label: string;
-  ts: number;
-};
+type AuditEntry = { stepId: string; question: string; statement: string; };
 
 type State = {
   currentId: string;
@@ -49,10 +44,6 @@ function enhanceExternalLinks(root: ParentNode | null) {
     a.appendChild(sr);
     a.appendChild(sup);
     (a as HTMLElement).dataset.enhanced = '1';
-    a.addEventListener('click', () => {
-      const step = stepById(state.currentId);
-      if (step) pushAudit(step.title, 'Opened external link: ' + ((a as HTMLElement).innerText || 'link'));
-    });
   });
 
   const bootstrap = (window as any).bootstrap;
@@ -65,6 +56,28 @@ function enhanceExternalLinks(root: ParentNode | null) {
       }
     });
   }
+}
+
+function decisionHTML(s: Step) {
+  const d = s.decision;
+  if (!d) return '';
+  const opts = d.options
+    .map(
+      (o, i) =>
+        `<button class='btn ${i === 0 ? 'btn-primary' : 'btn-outline-primary'}' data-next='${o.next}' data-log='${escapeAttr(o.logStatement)}'>${o.label}</button>`
+    )
+    .join('');
+  return `<div class='decision-callout mt-3'>
+      <div class='d-flex align-items-center justify-content-between flex-wrap gap-2 mb-1'>
+        <span class='title'>Decision point</span>${d.hint ? `<span class='hint'>${d.hint}</span>` : ''}
+      </div>
+      <div class='mb-2'>${d.question}</div>
+      <div class='d-flex gap-2 flex-wrap'>${opts}</div>
+    </div>`;
+}
+
+function escapeAttr(v: string) {
+  return v.replace(/&/g, '&amp;').replace(/'/g, '&#39;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
 }
 
 function renderStep() {
@@ -91,6 +104,10 @@ function renderStep() {
       </details>`
     : '';
 
+  if (s.logStatement && !state.audit.some((e) => e.stepId === s.id && e.statement === s.logStatement)) {
+    state.audit.push({ stepId: s.id, question: '', statement: s.logStatement });
+  }
+
   const stepContainer = $('#step-container');
   if (!stepContainer) return;
 
@@ -101,6 +118,7 @@ function renderStep() {
         </div>
         <div class='alert alert-instruction mb-2'>${s.instruction}</div>
         ${s.description ? `<div class='mt-2'>${s.description}</div>` : ''}
+        ${decisionHTML(s)}
         <div class='d-flex justify-content-end mt-4'>${btnsHTML}</div>
         ${furtherResourcesHTML}
       </div>`;
@@ -121,7 +139,6 @@ function renderStep() {
   }
   if (hasURL && tipBtn) {
     tipBtn.addEventListener('click', () => {
-      pushAudit(s.title, 'Opened guidance');
       window.open(extURL, '_blank', 'noopener');
     });
   }
@@ -129,10 +146,8 @@ function renderStep() {
   $$('#step-container [data-next]').forEach((b) =>
     b.addEventListener('click', () => {
       const nxt = b.getAttribute('data-next');
-      const label = b.textContent || '';
       if (!nxt) return;
       if (nxt === '__reset__') {
-        pushAudit(s.title, label);
         state.audit = [];
         state.history = [];
         state.currentId = 'start';
@@ -141,14 +156,14 @@ function renderStep() {
         return;
       }
       if (nxt === '__back__') {
-        pushAudit(s.title, 'Back');
         const prev = state.history.pop();
         state.currentId = prev || 'start';
         renderStep();
         renderAudit();
         return;
       }
-      pushAudit(s.title, label);
+      const statement = b.getAttribute('data-log');
+      if (statement) pushAudit(s.decision?.question || s.title, statement);
       state.history.push(state.currentId);
       state.currentId = nxt;
       renderStep();
@@ -178,8 +193,8 @@ function openPopup(key: string | null) {
   setTimeout(() => enhanceExternalLinks(body), 0);
 }
 
-function pushAudit(t: string, l: string) {
-  state.audit.push({ stepId: state.currentId, title: t, label: l, ts: Date.now() });
+function pushAudit(question: string, statement: string) {
+  state.audit.push({ stepId: state.currentId, question, statement });
   renderAudit();
 }
 
@@ -188,7 +203,7 @@ function renderAudit() {
   if (!audit) return;
   audit.innerHTML =
     state.audit
-      .map((e) => `<div>${e.title} – <span class='muted'>${e.label}</span></div>`)
+      .map((e) => `<li><div class='muted'>${e.question}</div><div>${e.statement}</div></li>`)
       .join('') || '<div class="muted">Started · Session initialised</div>';
 }
 

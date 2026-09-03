@@ -1,84 +1,200 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "type": "object",
-  "required": ["meta", "resources", "steps"],
+  "required": [
+    "meta",
+    "resources",
+    "steps"
+  ],
   "additionalProperties": false,
   "properties": {
     "meta": {
       "type": "object",
-      "required": ["version", "lastReviewed", "approvedBy"],
+      "required": [
+        "version",
+        "lastReviewed",
+        "approvedBy"
+      ],
       "additionalProperties": false,
       "properties": {
-        "version": { "type": "string" },
-        "lastReviewed": { "type": "string" },
-        "approvedBy": { "type": "string" }
+        "version": {
+          "type": "string"
+        },
+        "lastReviewed": {
+          "type": "string"
+        },
+        "approvedBy": {
+          "type": "string"
+        }
       }
     },
     "resources": {
       "type": "object",
-      "required": ["stepExternal", "popups"],
+      "required": [
+        "stepExternal",
+        "popups"
+      ],
       "additionalProperties": false,
       "properties": {
         "stepExternal": {
           "type": "object",
-          "additionalProperties": { "type": "string" }
+          "additionalProperties": {
+            "type": "string"
+          }
         },
         "popups": {
           "type": "object",
-          "additionalProperties": { "$ref": "#/definitions/popup" }
+          "additionalProperties": {
+            "$ref": "#/definitions/popup"
+          }
         }
       }
     },
     "steps": {
       "type": "array",
-      "items": { "$ref": "#/definitions/step" }
+      "items": {
+        "$ref": "#/definitions/step"
+      }
     }
   },
   "definitions": {
     "popup": {
       "type": "object",
-      "required": ["title", "body"],
+      "required": [
+        "title",
+        "body"
+      ],
       "additionalProperties": false,
       "properties": {
-        "title": { "type": "string" },
-        "body": { "type": "string" }
+        "title": {
+          "type": "string"
+        },
+        "body": {
+          "type": "string"
+        }
       }
     },
     "button": {
       "type": "object",
-      "required": ["label", "next"],
+      "required": [
+        "label",
+        "next"
+      ],
       "additionalProperties": false,
       "properties": {
-        "label": { "type": "string" },
-        "next": { "type": "string" }
+        "label": {
+          "type": "string"
+        },
+        "next": {
+          "type": "string"
+        }
+      }
+    },
+    "decisionOption": {
+      "type": "object",
+      "required": [
+        "label",
+        "next",
+        "logStatement"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "label": {
+          "type": "string",
+          "minLength": 1
+        },
+        "next": {
+          "type": "string",
+          "minLength": 1
+        },
+        "logStatement": {
+          "type": "string",
+          "minLength": 8,
+          "description": "Clinical statement written to the pathway log when this option is chosen. Sentence case, no trailing full stop, no reference to the tool or the interaction. Prose rules are enforced in scripts/validate-rules.mjs."
+        }
+      }
+    },
+    "decision": {
+      "type": "object",
+      "required": [
+        "question",
+        "options"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "question": {
+          "type": "string",
+          "minLength": 1
+        },
+        "hint": {
+          "type": "string"
+        },
+        "options": {
+          "type": "array",
+          "minItems": 2,
+          "items": {
+            "$ref": "#/definitions/decisionOption"
+          }
+        }
       }
     },
     "furtherResourceLink": {
       "type": "object",
-      "required": ["label"],
+      "required": [
+        "label"
+      ],
       "additionalProperties": false,
       "properties": {
-        "label": { "type": "string" },
-        "url": { "type": "string" },
-        "popup": { "type": "string" }
+        "label": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string"
+        },
+        "popup": {
+          "type": "string"
+        }
       }
     },
     "step": {
       "type": "object",
-      "required": ["id", "title", "instruction"],
+      "required": [
+        "id",
+        "title",
+        "instruction"
+      ],
       "additionalProperties": false,
       "properties": {
-        "id": { "type": "string" },
-        "title": { "type": "string" },
-        "instruction": { "type": "string" },
-        "description": { "type": "string" },
+        "id": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "instruction": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "decision": {
+          "$ref": "#/definitions/decision"
+        },
+        "logStatement": {
+          "type": "string",
+          "minLength": 8
+        },
         "buttons": {
           "type": "array",
-          "items": { "$ref": "#/definitions/button" }
+          "items": {
+            "$ref": "#/definitions/button"
+          }
         },
         "furtherResources": {
           "type": "array",
-          "items": { "$ref": "#/definitions/furtherResourceLink" }
+          "items": {
+            "$ref": "#/definitions/furtherResourceLink"
+          }
         }
       }
     }
