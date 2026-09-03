@@ -7,13 +7,15 @@ type State = {
   currentId: string;
   audit: AuditEntry[];
   history: string[];
+  /** audit.length at the moment of each forward transition, parallel to history. */
+  auditMarks: number[];
 };
 
 const RULES = rulesJson as Rules;
 const $ = (s: string, r: ParentNode | Document = document) => r.querySelector(s);
 const $$ = (s: string, r: ParentNode | Document = document) => Array.from(r.querySelectorAll(s));
 
-const state: State = { currentId: 'start', audit: [], history: [] };
+const state: State = { currentId: 'start', audit: [], history: [], auditMarks: [] };
 
 function iconConsultingSVG() {
   return `<svg class="step-link-icon" viewBox="0 0 16 16" width="38" height="38" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -146,6 +148,7 @@ function renderStep() {
       if (nxt === '__reset__') {
         state.audit = [];
         state.history = [];
+        state.auditMarks = [];
         state.currentId = 'start';
         renderStep();
         renderAudit();
@@ -153,15 +156,19 @@ function renderStep() {
       }
       if (nxt === '__back__') {
         const prev = state.history.pop();
+        const mark = state.auditMarks.pop();
+        if (mark !== undefined) state.audit.length = mark;
         state.currentId = prev || 'start';
         renderStep();
         renderAudit();
         return;
       }
+      const mark = state.audit.length;
       logStep(s, 'departure');
       const statement = b.getAttribute('data-log');
       if (statement) pushAudit(s.decision?.question || s.title, statement);
       state.history.push(state.currentId);
+      state.auditMarks.push(mark);
       state.currentId = nxt;
       logStep(stepById(nxt), 'arrival');
       renderStep();
@@ -238,6 +245,7 @@ export function init() {
     resetBtn.addEventListener('click', () => {
       state.audit = [];
       state.history = [];
+      state.auditMarks = [];
       state.currentId = 'start';
       renderStep();
       renderAudit();
