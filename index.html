@@ -138,6 +138,18 @@
       color: var(--muted);
     }
 
+    .pathway-log li {
+      padding-bottom: .5rem;
+      margin-bottom: .5rem;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .pathway-log li:last-child {
+      margin-bottom: 0;
+      padding-bottom: 0;
+      border-bottom: none;
+    }
+
     .btn-primary {
       background: var(--brand);
       border-color: var(--brand);
@@ -358,7 +370,7 @@
         <div class="sidebar-card p-3 mb-3">
           <h5 class="mb-0">Pathway log</h5>
           <div id="audit-render" class="mt-2">
-            <div class="muted">Started · Session initialised</div>
+            <p class="muted mb-0">Your answers appear here as you work through the pathway. You can copy the summary into your notes at the end.</p>
           </div>
         </div>
       </div>

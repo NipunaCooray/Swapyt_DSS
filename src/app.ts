@@ -104,10 +104,6 @@ function renderStep() {
       </details>`
     : '';
 
-  if (s.logStatement && !state.audit.some((e) => e.stepId === s.id && e.statement === s.logStatement)) {
-    state.audit.push({ stepId: s.id, question: '', statement: s.logStatement });
-  }
-
   const stepContainer = $('#step-container');
   if (!stepContainer) return;
 
@@ -162,10 +158,12 @@ function renderStep() {
         renderAudit();
         return;
       }
+      logStep(s, 'departure');
       const statement = b.getAttribute('data-log');
       if (statement) pushAudit(s.decision?.question || s.title, statement);
       state.history.push(state.currentId);
       state.currentId = nxt;
+      logStep(stepById(nxt), 'arrival');
       renderStep();
       renderAudit();
     })
@@ -198,13 +196,29 @@ function pushAudit(question: string, statement: string) {
   renderAudit();
 }
 
+function logStep(s: Step | undefined, when: 'arrival' | 'departure') {
+  if (!s?.logStatement) return;
+  if ((s.logOn ?? 'departure') !== when) return;
+  state.audit.push({ stepId: s.id, question: '', statement: s.logStatement });
+}
+
 function renderAudit() {
   const audit = $('#audit-render');
   if (!audit) return;
+  if (!state.audit.length) {
+    audit.innerHTML =
+      "<p class='muted mb-0'>Your answers appear here as you work through the pathway. You can copy the summary into your notes at the end.</p>";
+    return;
+  }
   audit.innerHTML =
+    '<ol class="pathway-log list-unstyled mb-0">' +
     state.audit
-      .map((e) => `<li><div class='muted'>${e.question}</div><div>${e.statement}</div></li>`)
-      .join('') || '<div class="muted">Started · Session initialised</div>';
+      .map(
+        (e) =>
+          `<li>${e.question ? `<div class='muted'>${e.question}</div>` : ''}<div>${e.statement}</div></li>`
+      )
+      .join('') +
+    '</ol>';
 }
 
 export function init() {
@@ -217,6 +231,7 @@ export function init() {
       c.innerHTML = `<div class='alert alert-danger'>Init error: ${msg}</div>`;
     }
   }
+  renderAudit();
 
   const resetBtn = document.getElementById('btn-reset');
   if (resetBtn) {

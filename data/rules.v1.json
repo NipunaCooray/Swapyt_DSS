@@ -298,7 +298,8 @@
         {
           "label": "Abdominal injury in children education module"
         }
-      ]
+      ],
+      "logStatement": "Blunt abdominal injury with suspected splenic injury — pathway commenced"
     },
     {
       "id": "prepare",
@@ -332,7 +333,8 @@
           "label": "Effective Communication | Victorian State Trauma System",
           "url": "https://trauma.reach.vic.gov.au/guidelines/teamwork-and-communication/effective-communication/"
         }
-      ]
+      ],
+      "logStatement": "Trauma team, equipment and blood products prepared"
     },
     {
       "id": "primary",
@@ -369,7 +371,8 @@
             "logStatement": "No suspicion of ongoing intra-abdominal haemorrhage"
           }
         ]
-      }
+      },
+      "logStatement": "Primary survey (CABCDE) completed; life-threatening emergencies managed as identified"
     },
     {
       "id": "lsi",
@@ -406,7 +409,8 @@
             "logStatement": "Urgent intervention not able to be provided locally"
           }
         ]
-      }
+      },
+      "logStatement": "Need for life-saving intervention for abdominal injury assessed"
     },
     {
       "id": "intervention_splenic",
@@ -447,7 +451,8 @@
             "logStatement": "No local capacity or staff skill mix for intensive care or HDU admission"
           }
         ]
-      }
+      },
+      "logStatement": "Need for intervention in splenic injury assessed"
     },
     {
       "id": "provide_lsi",
@@ -515,7 +520,8 @@
           "label": "Clinical Practice Guidelines: Acute pain management",
           "url": "https://www.rch.org.au/clinicalguide/guideline_index/Acute_pain_management/"
         }
-      ]
+      ],
+      "logStatement": "Secondary survey and abdominal assessment completed"
     },
     {
       "id": "ct_criteria",
@@ -552,7 +558,8 @@
             "logStatement": "Does not meet criteria for abdominal CT"
           }
         ]
-      }
+      },
+      "logStatement": "Assessed against criteria for contrast-enhanced abdominal CT"
     },
     {
       "id": "ct_avail",
@@ -585,7 +592,8 @@
             "logStatement": "Safe access to CT not available locally"
           }
         ]
-      }
+      },
+      "logStatement": "Local CT access, resources and personnel assessed"
     },
     {
       "id": "ct_scan",
@@ -632,7 +640,8 @@
             "logStatement": "Group 4: no splenic injury identified on CT"
           }
         ]
-      }
+      },
+      "logStatement": "Contrast-enhanced CT abdomen reviewed; injury grouped by clinical and radiological grading"
     },
     {
       "id": "no_splenic_injury",
@@ -644,7 +653,9 @@
           "label": "End",
           "next": "__reset__"
         }
-      ]
+      ],
+      "logOn": "arrival",
+      "logStatement": "Pathway indicates no splenic injury; manage associated injuries as indicated"
     },
     {
       "id": "lvl1",
@@ -673,7 +684,8 @@
             "logStatement": "Local capacity, resources or personnel not available for a child of this age"
           }
         ]
-      }
+      },
+      "logStatement": "Group 1 care requirements reviewed against local resources and personnel"
     },
     {
       "id": "lvl2",
@@ -706,7 +718,8 @@
             "logStatement": "No local capacity to admit and manage the child"
           }
         ]
-      }
+      },
+      "logStatement": "Group 2 care requirements reviewed against local resources and personnel"
     },
     {
       "id": "lvl3",
@@ -747,7 +760,8 @@
             "logStatement": "No local capacity to admit and manage, including intervention if required"
           }
         ]
-      }
+      },
+      "logStatement": "Group 3 care requirements reviewed against local resources, personnel and intervention capability"
     },
     {
       "id": "cap_lvl3",
@@ -788,7 +802,8 @@
             "logStatement": "No local capacity or capability to admit a child or young person of this age"
           }
         ]
-      }
+      },
+      "logStatement": "Group 3 admission capacity and capability reviewed for a child of this age"
     },
     {
       "id": "inpatient_icu",
@@ -831,6 +846,7 @@
           }
         ]
       },
+      "logOn": "arrival",
       "logStatement": "Pathway supports admission to HDU or intensive care"
     },
     {
@@ -850,6 +866,7 @@
           "url": "https://nswhealth.sharepoint.com/sites/SCHN-NETSINTRANET"
         }
       ],
+      "logOn": "arrival",
       "logStatement": "Pathway supports ward-based care under a general or paediatric surgeon"
     },
     {
@@ -881,6 +898,7 @@
           "url": "https://aci.health.nsw.gov.au/__data/assets/pdf_file/0007/560257/ACI-ITIM-NSW-inter-hospital-major-trauma-transfer-interim-guideline.pdf#page=4"
         }
       ],
+      "logOn": "arrival",
       "logStatement": "Pathway indicates discussion with NETS (1300 362 500) for advice or transfer"
     },
     {
@@ -907,6 +925,7 @@
           "label": "Return to usual activities <em>(link to be added)</em>"
         }
       ],
+      "logOn": "arrival",
       "logStatement": "Pathway supports discharge with after-care instructions"
     }
   ],

@@ -184,6 +184,9 @@
           "type": "string",
           "minLength": 8
         },
+        "logOn": {
+          "enum": ["arrival", "departure"]
+        },
         "buttons": {
           "type": "array",
           "items": {

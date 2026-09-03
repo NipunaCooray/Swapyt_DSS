@@ -78,11 +78,26 @@ for (const step of rules.steps) {
     }
   }
 
-  // Terminal steps assert an outcome, so they need something to say.
   const onward = [...(step.buttons ?? []), ...(step.decision?.options ?? [])]
     .filter((x) => !x.next.startsWith('__'));
-  if (onward.length === 0 && !step.logStatement) {
-    warnings.push(`${step.id}: terminal step with no logStatement — nothing is recorded on arrival`);
+
+  const logOn = step.logOn ?? 'departure';
+  if (step.logStatement) {
+    const isConclusion = TOOL_VOICE.test(step.logStatement);
+    if (isConclusion && logOn !== 'arrival') {
+      errors.push(`${step.id}: conclusion-voice logStatement needs logOn: "arrival" — it would be lost if the clinician stops here`);
+    }
+    if (!isConclusion && logOn === 'arrival') {
+      errors.push(`${step.id}: logOn: "arrival" asserts the statement before the clinician has done it — use departure, or reword as a conclusion`);
+    }
+    if (UI_VOICE.test(step.logStatement)) {
+      errors.push(`${step.id}: logStatement describes the interaction, not a clinical event — "${step.logStatement}"`);
+    }
+  } else {
+    errors.push(`${step.id}: no logStatement — every pathway step is a clinical event`);
+  }
+  if (onward.length === 0 && logOn !== 'arrival') {
+    errors.push(`${step.id}: terminal step must use logOn: "arrival" — it is never departed`);
   }
   if (step.logStatement && !TOOL_VOICE.test(step.logStatement) && !/^[A-Z]/.test(step.logStatement)) {
     warnings.push(`${step.id}: step logStatement should start with a capital`);

@@ -57,7 +57,15 @@ export interface Step {
   description?: string;
   /** Clinical decision point. Rendered from data - never hand-written in HTML. */
   decision?: Decision;
-  /** Written to the log on arrival at this step. Used for outcome steps. */
+  /**
+   * When `logStatement` is written to the pathway log.
+   * "departure" (default) - statements about what the clinician did, written
+   * when they leave the step via a forward transition.
+   * "arrival" - conclusions the tool asserts, true the moment the step is
+   * reached. Required for outcome steps, which a clinician may never leave.
+   */
+  logOn?: 'arrival' | 'departure';
+  /** Written to the pathway log per `logOn`. Every step has one. */
   logStatement?: string;
   buttons?: StepButton[];
   furtherResources?: FurtherResourceLink[];
