@@ -327,19 +327,30 @@
 
     .resource-list li {
       display: flex;
-      align-items: baseline;
+      align-items: flex-start;
       gap: .5rem;
     }
 
     .resource-list .bi {
       color: var(--muted);
       flex: 0 0 auto;
+      /* Align with the label's first line, not the li's full height. */
+      margin-top: .15em;
+    }
+
+    /* Flex items default to min-width:auto, which refuses to shrink below the
+       text's unwrapped width — without this, a long citation-style label
+       (e.g. ct_scan's Kozar reference) overflows instead of wrapping. */
+    .resource-list .resource-label {
+      flex: 1 1 auto;
+      min-width: 0;
     }
 
     .resource-type-label {
       font-size: 11px;
       text-transform: uppercase;
       letter-spacing: .04em;
+      flex: 0 0 auto;
     }
 
     .footer-disclaimer {
@@ -437,13 +448,10 @@
       outline-offset: 2px;
     }
 
+    /* The inner <ul> carries .resource-list for its icon/type-marker layout;
+       this just adds the top gap between the summary and the list. */
     .further-resources ul {
       margin: .6rem 0 0;
-      padding-left: 1.25rem;
-    }
-
-    .further-resources li + li {
-      margin-top: .3rem;
     }
 
     a {

@@ -153,6 +153,9 @@
         },
         "popup": {
           "type": "string"
+        },
+        "icon": {
+          "type": "string"
         }
       }
     },
@@ -198,6 +201,9 @@
           "items": {
             "$ref": "#/definitions/furtherResourceLink"
           }
+        },
+        "furtherResourcesExpanded": {
+          "type": "boolean"
         },
         "footer": {
           "type": "string"

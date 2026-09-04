@@ -48,6 +48,14 @@ export interface FurtherResourceLink {
   label: string;
   url?: string;
   popup?: string;
+  /**
+   * Bootstrap icon class override (e.g. "bi-play-circle"). Falls back to a
+   * type-based icon — external link vs in-app popup vs unavailable — when
+   * unset. Only use this for an entry whose icon genuinely isn't about its
+   * type (e.g. start's training entries); it must not be assigned by
+   * position elsewhere.
+   */
+  icon?: string;
 }
 
 export interface Step {
@@ -69,6 +77,13 @@ export interface Step {
   logStatement?: string;
   buttons?: StepButton[];
   furtherResources?: FurtherResourceLink[];
+  /**
+   * Render furtherResources expanded inline (between description and the
+   * actions row) rather than behind a collapsed <details> disclosure at the
+   * bottom of the card. For a step where a first-time user benefits from
+   * seeing these resources without an extra click.
+   */
+  furtherResourcesExpanded?: boolean;
   /**
    * Raw HTML rendered last in the card, after buttons and further resources.
    * For standing notices that must stay below the primary action (e.g. a

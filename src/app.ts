@@ -1,5 +1,5 @@
 import rulesJson from '../data/rules.v1.json';
-import type { Rules, Step } from './types';
+import type { Rules, Step, FurtherResourceLink } from './types';
 
 type AuditEntry = { stepId: string; question: string; statement: string; };
 
@@ -111,6 +111,27 @@ function escapeAttr(v: string) {
   return v.replace(/&/g, '&amp;').replace(/'/g, '&#39;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
 }
 
+/**
+ * Shared across every step's Further resources list. A resource is exactly
+ * one of: an external link (leaves the app — box-arrow icon, opens a new
+ * tab), an in-app popup (info icon, no new-tab affordance since it doesn't
+ * leave the page), or unavailable (muted "Coming soon", not focusable).
+ * `icon` overrides the type default for a step-specific case (e.g. start's
+ * training entries) — it must not be assigned by position anywhere else.
+ */
+function resourceEntryHTML(r: FurtherResourceLink) {
+  const isPdf = !!r.url && /\.pdf(?:[?#]|$)/i.test(r.url);
+  const iconHTML = `<i class="bi ${r.icon ?? (r.url ? 'bi-box-arrow-up-right' : r.popup ? 'bi-info-circle' : 'bi-dash-circle')}" aria-hidden="true"></i>`;
+  if (r.url) {
+    const marker = isPdf ? `<span class="muted resource-type-label">PDF</span>` : '';
+    return `<li>${iconHTML}<a class="resource-label" href="${r.url}" target="_blank" rel="noopener" title="Opens in a new tab">${r.label}</a>${marker}</li>`;
+  }
+  if (r.popup) {
+    return `<li>${iconHTML}<span class="popup-link resource-label" data-popup="${r.popup}">${r.label}</span></li>`;
+  }
+  return `<li>${iconHTML}<span class="resource-label">${r.label}</span><span class="muted resource-type-label">Coming soon</span></li>`;
+}
+
 function renderStep(focus = true) {
   const s = stepById(state.currentId) || stepById('start');
   if (!s) return;
@@ -128,16 +149,20 @@ function renderStep(focus = true) {
       ${btnsHTML}
     </div>`;
 
-  const furtherResourcesHTML = s.furtherResources?.length
+  // Most steps get a collapsed disclosure at the bottom of the card; a step
+  // that sets furtherResourcesExpanded gets an expanded section instead,
+  // placed earlier (see the card template below) rather than after actions.
+  const resourceItemsHTML = s.furtherResources?.map(resourceEntryHTML).join('') ?? '';
+  const furtherResourcesExpandedHTML = s.furtherResources?.length && s.furtherResourcesExpanded
+    ? `<div class='section-divider mb-3'>
+        <div class='muted resources-heading mb-2'>Further resources</div>
+        <ul class='resource-list'>${resourceItemsHTML}</ul>
+      </div>`
+    : '';
+  const furtherResourcesCollapsedHTML = s.furtherResources?.length && !s.furtherResourcesExpanded
     ? `<details class='further-resources mt-4'>
         <summary>Further resources</summary>
-        <ul class='mb-0'>${s.furtherResources
-          .map((r) => {
-            if (r.popup) return `<li><span class="popup-link" data-popup="${r.popup}">${r.label}</span></li>`;
-            if (r.url) return `<li><a href="${r.url}" target="_blank" rel="noopener">${r.label}</a></li>`;
-            return `<li>${r.label}</li>`;
-          })
-          .join('')}</ul>
+        <ul class='resource-list mb-0'>${resourceItemsHTML}</ul>
       </details>`
     : '';
 
@@ -154,8 +179,9 @@ function renderStep(focus = true) {
         <div class='alert alert-instruction mb-2'>${s.instruction}</div>
         ${s.description ? `<div class='mt-2'>${s.description}</div>` : ''}
         ${decisionHTML(s)}
+        ${furtherResourcesExpandedHTML}
         ${actionsRowHTML}
-        ${furtherResourcesHTML}
+        ${furtherResourcesCollapsedHTML}
         ${s.footer ? `<div class='mt-3'>${s.footer}</div>` : ''}
       </div>`;
 
