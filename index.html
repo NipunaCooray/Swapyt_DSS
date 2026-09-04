@@ -144,6 +144,10 @@
       border-bottom: 1px solid var(--line);
     }
 
+    #print-header {
+      display: none;
+    }
+
     .pathway-log li:last-child {
       margin-bottom: 0;
       padding-bottom: 0;
@@ -344,6 +348,48 @@
       width: 22px;
       height: 22px;
     }
+
+    @media print {
+      /* Print the log alone: the step card, navigation and chrome are screen aids. */
+      .header-card, #step-container, #log-actions, .modal {
+        display: none !important;
+      }
+
+      .col-lg-8 {
+        display: none !important;
+      }
+
+      .col-lg-4 {
+        width: 100% !important;
+        max-width: 100% !important;
+        flex: 0 0 100% !important;
+      }
+
+      .sidebar-card {
+        border: none;
+        box-shadow: none;
+        padding: 0 !important;
+      }
+
+      #print-header {
+        display: block !important;
+      }
+
+      .pathway-log li {
+        break-inside: avoid;
+      }
+
+      .pathway-log .muted {
+        display: none; /* questions are screen furniture */
+      }
+
+      #audit-render::after {
+        content: "Decision support only; does not replace clinical judgement. No patient identifiers recorded by this tool.";
+        display: block;
+        margin-top: 1rem;
+        font-size: 9pt;
+      }
+    }
   </style>
 </head>
 
@@ -368,9 +414,17 @@
       </div>
       <div class="col-lg-4">
         <div class="sidebar-card p-3 mb-3">
+          <div id="print-header">
+            <h5 class="mb-0">Paediatric splenic trauma pathway</h5>
+            <p class="muted mb-2" id="print-meta"></p>
+          </div>
           <h5 class="mb-0">Pathway log</h5>
           <div id="audit-render" class="mt-2">
             <p class="muted mb-0">Your answers appear here as you work through the pathway. You can copy the summary into your notes at the end.</p>
+          </div>
+          <div id="log-actions" class="d-flex gap-2 mt-3 pt-3 border-top">
+            <button type="button" class="btn btn-sm btn-primary" id="btn-copy-log">Copy summary</button>
+            <button type="button" class="btn btn-sm btn-outline-secondary" id="btn-print-log">Print</button>
           </div>
         </div>
       </div>

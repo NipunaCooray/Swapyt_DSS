@@ -211,21 +211,54 @@ function logStep(s: Step | undefined, when: 'arrival' | 'departure') {
 
 function renderAudit() {
   const audit = $('#audit-render');
-  if (!audit) return;
-  if (!state.audit.length) {
-    audit.innerHTML =
-      "<p class='muted mb-0'>Your answers appear here as you work through the pathway. You can copy the summary into your notes at the end.</p>";
-    return;
+  if (audit) {
+    audit.innerHTML = !state.audit.length
+      ? "<p class='muted mb-0'>Your answers appear here as you work through the pathway. You can copy the summary into your notes at the end.</p>"
+      : '<ol class="pathway-log list-unstyled mb-0">' +
+        state.audit
+          .map(
+            (e) =>
+              `<li>${e.question ? `<div class='muted'>${e.question}</div>` : ''}<div>${e.statement}</div></li>`
+          )
+          .join('') +
+        '</ol>';
   }
-  audit.innerHTML =
-    '<ol class="pathway-log list-unstyled mb-0">' +
-    state.audit
-      .map(
-        (e) =>
-          `<li>${e.question ? `<div class='muted'>${e.question}</div>` : ''}<div>${e.statement}</div></li>`
-      )
-      .join('') +
-    '</ol>';
+  const empty = state.audit.length === 0;
+  $$('#log-actions button').forEach((b) => ((b as HTMLButtonElement).disabled = empty));
+}
+
+function buildSummary() {
+  const { version, lastReviewed, approvedBy } = RULES.meta;
+  const lines = [
+    'Paediatric splenic trauma pathway',
+    `SWAPYT decision support ${version} · last reviewed ${lastReviewed} · ${approvedBy}`,
+    '',
+    ...state.audit.map((e) => `- ${e.statement}`),
+    '',
+    'Decision support only; does not replace clinical judgement.',
+    'No patient identifiers recorded by this tool.'
+  ];
+  return lines.join('\n');
+}
+
+async function copySummary(btn: HTMLElement) {
+  const text = buildSummary();
+  try {
+    await navigator.clipboard.writeText(text);
+  } catch {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.setAttribute('readonly', '');
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    ta.remove();
+  }
+  const label = btn.textContent;
+  btn.textContent = 'Copied';
+  window.setTimeout(() => { btn.textContent = label; }, 1500);
 }
 
 export function init() {
@@ -239,6 +272,15 @@ export function init() {
     }
   }
   renderAudit();
+
+  const printMeta = $('#print-meta');
+  if (printMeta) {
+    const { version, lastReviewed, approvedBy } = RULES.meta;
+    printMeta.textContent = `SWAPYT decision support ${version} · last reviewed ${lastReviewed} · ${approvedBy}`;
+  }
+
+  $('#btn-copy-log')?.addEventListener('click', (e) => copySummary(e.currentTarget as HTMLElement));
+  $('#btn-print-log')?.addEventListener('click', () => window.print());
 
   const resetBtn = document.getElementById('btn-reset');
   if (resetBtn) {
