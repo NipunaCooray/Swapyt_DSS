@@ -201,6 +201,9 @@
         },
         "footer": {
           "type": "string"
+        },
+        "actionsLeft": {
+          "type": "string"
         }
       }
     }

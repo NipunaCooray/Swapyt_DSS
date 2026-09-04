@@ -118,6 +118,15 @@ function renderStep(focus = true) {
   const btnsHTML = btnsData
     .map((b) => `<button class="btn ${String(b.label).toLowerCase().includes('back') ? 'btn-outline-secondary' : 'btn-primary'} me-2" data-next="${b.next}">${b.label}</button>`)
     .join('');
+  // With actionsLeft content, the row shares space with it (space-between)
+  // instead of pushing the buttons alone to the right (justify-content-end).
+  const actionsRowClass = s.actionsLeft
+    ? 'd-flex align-items-center justify-content-between gap-3 flex-wrap section-divider start-action-row'
+    : 'd-flex justify-content-end mt-4';
+  const actionsRowHTML = `<div class='${actionsRowClass}'>
+      ${s.actionsLeft ? `<div class='d-flex align-items-center gap-3 flex-wrap start-popup-links'>${s.actionsLeft}</div>` : ''}
+      ${btnsHTML}
+    </div>`;
 
   const furtherResourcesHTML = s.furtherResources?.length
     ? `<details class='further-resources mt-4'>
@@ -145,7 +154,7 @@ function renderStep(focus = true) {
         <div class='alert alert-instruction mb-2'>${s.instruction}</div>
         ${s.description ? `<div class='mt-2'>${s.description}</div>` : ''}
         ${decisionHTML(s)}
-        <div class='d-flex justify-content-end mt-4'>${btnsHTML}</div>
+        ${actionsRowHTML}
         ${furtherResourcesHTML}
         ${s.footer ? `<div class='mt-3'>${s.footer}</div>` : ''}
       </div>`;
@@ -268,10 +277,18 @@ function announce(text: string) {
 function renderAudit() {
   const audit = $('#audit-render');
   if (!audit) return;
-  // Disable before the early return so an empty log always disables both
-  // sidebar buttons, not just whichever one happens to run after it.
+  // Hide the actions row (rather than disable it) before the early return, so
+  // an empty log never shows a pair of greyed-out controls — the empty-state
+  // text below already says what the panel is for.
   const empty = state.audit.length === 0;
-  $$('#log-actions button').forEach((b) => ((b as HTMLButtonElement).disabled = empty));
+  const actions = $('#log-actions') as HTMLElement | null;
+  // #log-actions carries Bootstrap's .d-flex utility (display: flex
+  // !important) — a plain inline style can't beat that, so hide with the
+  // same priority and let removeProperty fall back to .d-flex when shown.
+  if (actions) {
+    if (empty) actions.style.setProperty('display', 'none', 'important');
+    else actions.style.removeProperty('display');
+  }
   if (empty) {
     audit.innerHTML = "<p class='muted mb-0'>Your answers appear here as you work through the pathway. You can copy the summary into your notes at the end.</p>";
     return;

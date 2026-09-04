@@ -75,6 +75,12 @@ export interface Step {
    * disclaimer) — `description` renders before buttons, so it can't reach here.
    */
   footer?: string;
+  /**
+   * Raw HTML rendered to the left of the buttons, in the same row. When set,
+   * the actions row switches from right-aligned to space-between so this
+   * content and the buttons share one line instead of stacking.
+   */
+  actionsLeft?: string;
 }
 
 export interface RuleResources {

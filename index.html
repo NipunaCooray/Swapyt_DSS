@@ -152,11 +152,19 @@
       border-bottom: none;
     }
 
+    /* The app's accent blue (also used for links and callout accents), not
+       the darker --brand navy — a solid navy fill on Start pathway read as
+       near-black and out-weighed the scope panel above it. */
     .btn-primary {
-      background: var(--brand);
-      border-color: var(--brand);
+      background: var(--teal);
+      border-color: var(--teal);
       font-weight: 600;
       letter-spacing: .02em;
+    }
+
+    .btn-primary:hover {
+      background: var(--brand-ink);
+      border-color: var(--brand-ink);
     }
 
     .btn-outline-primary {
@@ -189,19 +197,8 @@
       text-decoration: underline;
     }
 
-    .start-popup-links {
-      list-style: none;
-      margin: .35rem 0 0;
-      padding: 0;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 14px;
-    }
-
-    .start-popup-links li {
-      margin: 0;
-    }
-
+    /* Layout (display/gap/wrap) now comes from the Bootstrap utility classes
+       on the element itself — .start-popup-links only styles the links. */
     .start-popup-links .popup-link {
       display: inline-block;
       line-height: 1.2;
@@ -229,6 +226,14 @@
       background: transparent;
       border: none;
       padding: 0;
+    }
+
+    /* Consistent rhythm between card sections — same pair of values on every
+       instance so the gap above and below each rule reads identically. */
+    .section-divider {
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 0.5px solid var(--line);
     }
 
     .scope-grid {
@@ -259,8 +264,33 @@
       color: var(--callout-accent);
     }
 
+    /* Dormant: no exclusion panel exists yet (pending clinical authorship).
+       Kept ready so a second .scope-panel.scope-exclude can drop in beside
+       .scope-include and the grid returns to two columns unchanged. */
     .scope-exclude h6 {
       color: var(--ink);
+    }
+
+    /* Explicit two columns rather than auto-fit: the panel now spans the full
+       card width, so a fixed minmax breakpoint either left a wide dead gap
+       (too narrow) or collapsed to three columns (too permissive). Fixed
+       column counts fill the panel cleanly at any width in between. */
+    .criteria-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 4px 24px;
+    }
+
+    @media (max-width: 480px) {
+      .criteria-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .scope-divider {
+      border: none;
+      border-top: 1px solid var(--line);
+      margin: 12px 0;
     }
 
     .phase-preview {
