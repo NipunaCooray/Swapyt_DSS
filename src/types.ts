@@ -69,6 +69,12 @@ export interface Step {
   logStatement?: string;
   buttons?: StepButton[];
   furtherResources?: FurtherResourceLink[];
+  /**
+   * Raw HTML rendered last in the card, after buttons and further resources.
+   * For standing notices that must stay below the primary action (e.g. a
+   * disclaimer) — `description` renders before buttons, so it can't reach here.
+   */
+  footer?: string;
 }
 
 export interface RuleResources {

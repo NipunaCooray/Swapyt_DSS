@@ -198,6 +198,9 @@
           "items": {
             "$ref": "#/definitions/furtherResourceLink"
           }
+        },
+        "footer": {
+          "type": "string"
         }
       }
     }

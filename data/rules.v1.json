@@ -278,27 +278,16 @@
   "steps": [
     {
       "id": "start",
-      "title": "Management of blunt abdominal injury with suspected splenic injury — a decision-making tool and quick reference guide",
-      "instruction": "This is a practical, decision-making and education tool to support clinicians managing a child or young person up to age 16 with blunt abdominal injury who is suspected of having a blunt splenic injury, wherever they may present or be transferred to in NSW.",
-      "description": "<div class=\"alert alert-success my-2\" ><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"32\" height=\"32\" fill=\"currentColor\" class=\"bi bi-headset\" viewBox=\"0 0 16 16\"><path d=\"M8 1a5 5 0 0 0-5 5v1h1a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V6a6 6 0 1 1 12 0v6a2.5 2.5 0 0 1-2.5 2.5H9.366a1 1 0 0 1-.866.5h-1a1 1 0 1 1 0-2h1a1 1 0 0 1 .866.5H11.5A1.5 1.5 0 0 0 13 12h-1a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1h1V6a5 5 0 0 0-5-5\"/></svg> Click on this button on top right hand anytime you need to get support</div><div class=\"alert alert-warning my-2\"><strong>All clinicians should work within their scope of practice.</strong></div><ul class=\"start-popup-links\"><li><span class=\"popup-link\" data-popup=\"about_guide\">About the guide</span></li><li><span class=\"popup-link\" data-popup=\"about_paediatric_splenic_injury\">About paediatric splenic injury</span></li><li><span class=\"popup-link\" data-popup=\"disclaimer\">Disclaimer</span></li></ul>",
+      "title": "",
+      "instruction": "<div class=\"scope-grid\"><div class=\"scope-panel scope-include\"><h6 class=\"d-flex align-items-center gap-2 mb-2\"><i class=\"bi bi-check-lg\" aria-hidden=\"true\"></i> Use this pathway for</h6><ul class=\"mb-0 ps-3\"><li>Blunt abdominal injury</li><li>Suspected splenic injury</li><li>Up to and including age 16</li><li>Any NSW facility</li></ul></div><div class=\"scope-panel scope-exclude\"><h6 class=\"d-flex align-items-center gap-2 mb-2\"><i class=\"bi bi-x-lg\" aria-hidden=\"true\"></i> Do not use</h6><ul class=\"mb-0 ps-3\"><li>Penetrating abdominal injury</li><li>Age 17 and over</li><li>Isolated non-splenic injury</li><li>Known haematological disorder</li></ul></div></div>",
+      "description": "<div class=\"muted mb-1\">Four phases</div><div class=\"phase-preview mb-3\"><span class=\"phase-chip\">Assess and stabilise</span><i class=\"bi bi-chevron-right muted\" aria-hidden=\"true\"></i><span class=\"phase-chip\">Image and grade</span><i class=\"bi bi-chevron-right muted\" aria-hidden=\"true\"></i><span class=\"phase-chip\">Match to capability</span><i class=\"bi bi-chevron-right muted\" aria-hidden=\"true\"></i><span class=\"phase-chip\">Admit or transfer</span></div><div class=\"mb-3\"><div class=\"muted resources-heading mb-2\">Further resources</div><ul class=\"resource-list\"><li><i class=\"bi bi-file-earmark-pdf\" aria-hidden=\"true\"></i><a href=\"/assets/management-paediatric-splenic-injury-nsw-trauma-system.pdf\" target=\"_blank\" rel=\"noopener\" title=\"Opens in a new tab\">Management of paediatric spleen injury in the NSW Trauma system</a><span class=\"muted resource-type-label\">PDF</span></li><li><i class=\"bi bi-play-circle\" aria-hidden=\"true\"></i><span>Five minute guideline training</span></li><li><i class=\"bi bi-mortarboard\" aria-hidden=\"true\"></i><span>Abdominal injury in children education module</span></li></ul></div><ul class=\"start-popup-links\"><li><span class=\"popup-link\" data-popup=\"about_guide\">About the guide</span></li><li><span class=\"popup-link\" data-popup=\"about_paediatric_splenic_injury\">About paediatric splenic injury</span></li><li><span class=\"popup-link\" data-popup=\"disclaimer\">Disclaimer</span></li></ul>",
       "buttons": [
         {
-          "label": "Start",
+          "label": "Start pathway <i class=\"bi bi-arrow-right ms-1\" aria-hidden=\"true\"></i>",
           "next": "prepare"
         }
       ],
-      "furtherResources": [
-        {
-          "label": "Management of paediatric spleen injury in the NSW Trauma system",
-          "url": "/assets/management-paediatric-splenic-injury-nsw-trauma-system.pdf"
-        },
-        {
-          "label": "Five minute guideline training"
-        },
-        {
-          "label": "Abdominal injury in children education module"
-        }
-      ],
+      "footer": "<p class=\"muted footer-disclaimer mb-0\">Decision support only; does not replace clinical judgement. All clinicians should work within their scope of practice. This tool records no patient identifiers.</p>",
       "logStatement": "Blunt abdominal injury with suspected splenic injury — pathway commenced"
     },
     {
@@ -932,6 +921,6 @@
   "meta": {
     "version": "v1",
     "lastReviewed": "2026-02-05",
-    "approvedBy": "Not yet endorsed — beta"
+    "approvedBy": "SWAPYT programme, NSW Health"
   }
 }

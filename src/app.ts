@@ -17,14 +17,23 @@ const $$ = (s: string, r: ParentNode | Document = document) => Array.from(r.quer
 
 const state: State = { currentId: 'start', audit: [], history: [], auditMarks: [] };
 
-function iconConsultingSVG() {
-  return `<svg class="step-link-icon" viewBox="0 0 16 16" width="38" height="38" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-    <path d="M8 1a5 5 0 0 0-5 5v1h1a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V6a6 6 0 1 1 12 0v6a2.5 2.5 0 0 1-2.5 2.5H9.366a1 1 0 0 1-.866.5h-1a1 1 0 1 1 0-2h1a1 1 0 0 1 .866.5H11.5A1.5 1.5 0 0 0 13 12h-1a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1h1V6a5 5 0 0 0-5-5" fill="currentColor"/>
-  </svg>`;
-}
-
 function stepById(id: string) {
   return RULES.steps.find((s) => s.id === id);
+}
+
+function formatReviewDate(iso: string) {
+  const d = new Date(`${iso}T00:00:00`);
+  if (Number.isNaN(d.getTime())) return iso;
+  return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+}
+
+/**
+ * The header's Beta pill shows until meta.approvedBy names a real endorsing
+ * body (a clinical network, college or committee) rather than the programme
+ * that produced the tool. Revisit this check if that value's meaning changes.
+ */
+function isEndorsed(approvedBy: string) {
+  return /network|college|committee/i.test(approvedBy);
 }
 
 function enhanceExternalLinks(root: ParentNode | null) {
@@ -60,6 +69,25 @@ function enhanceExternalLinks(root: ParentNode | null) {
   }
 }
 
+/** Popup triggers are plain <span data-popup>, not natively focusable — make
+ * them reachable and operable by keyboard, matching the mouse click handler. */
+function enhancePopupTriggers(root: ParentNode | null) {
+  if (!root) return;
+  root.querySelectorAll('[data-popup]').forEach((el) => {
+    if ((el as HTMLElement).dataset.kbdEnhanced === '1') return;
+    if (!el.hasAttribute('tabindex')) el.setAttribute('tabindex', '0');
+    if (!el.hasAttribute('role')) el.setAttribute('role', 'button');
+    el.addEventListener('keydown', (e) => {
+      const ev = e as KeyboardEvent;
+      if (ev.key === 'Enter' || ev.key === ' ' || ev.key === 'Spacebar') {
+        ev.preventDefault();
+        (el as HTMLElement).click();
+      }
+    });
+    (el as HTMLElement).dataset.kbdEnhanced = '1';
+  });
+}
+
 function decisionHTML(s: Step) {
   const d = s.decision;
   if (!d) return '';
@@ -86,9 +114,6 @@ function escapeAttr(v: string) {
 function renderStep(focus = true) {
   const s = stepById(state.currentId) || stepById('start');
   if (!s) return;
-  const extURL = RULES.resources.stepExternal[s.id];
-  const hasURL = !!(extURL && typeof extURL === 'string' && extURL.trim() && extURL !== '#');
-  const toolTip = hasURL ? 'Call for support or to request transfer' : 'No link available';
   const btnsData = [...(s.id !== 'start' ? [{ label: 'Back', next: '__back__' }] : []), ...(s.buttons || [])];
   const btnsHTML = btnsData
     .map((b) => `<button class="btn ${String(b.label).toLowerCase().includes('back') ? 'btn-outline-secondary' : 'btn-primary'} me-2" data-next="${b.next}">${b.label}</button>`)
@@ -110,16 +135,19 @@ function renderStep(focus = true) {
   const stepContainer = $('#step-container');
   if (!stepContainer) return;
 
-  stepContainer.innerHTML = `<div class='card-step p-3 p-md-4'>
-        <div class='step-card-header mb-2'>
-          <h2 class='h5 mb-0' tabindex='-1'>${s.title}</h2>
-          <button class='step-link-btn' ${hasURL ? '' : 'disabled'} data-step-link='${hasURL ? extURL : ''}' aria-label='Open guidance for ${s.title}' data-bs-toggle='tooltip' data-bs-placement='left' title='${toolTip}'>${iconConsultingSVG()}</button>
-        </div>
+  // Reset is the most destructive control in the app; there is nothing to
+  // reset until the clinician has actually moved past the home screen.
+  const reset = $('#btn-reset') as HTMLElement | null;
+  if (reset) reset.style.display = state.history.length ? '' : 'none';
+
+  stepContainer.innerHTML = `<div class='card-step p-3 p-md-4' tabindex='-1'>
+        ${s.title ? `<h2 class='h5 mb-2' tabindex='-1'>${s.title}</h2>` : ''}
         <div class='alert alert-instruction mb-2'>${s.instruction}</div>
         ${s.description ? `<div class='mt-2'>${s.description}</div>` : ''}
         ${decisionHTML(s)}
         <div class='d-flex justify-content-end mt-4'>${btnsHTML}</div>
         ${furtherResourcesHTML}
+        ${s.footer ? `<div class='mt-3'>${s.footer}</div>` : ''}
       </div>`;
 
   const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -134,18 +162,10 @@ function renderStep(focus = true) {
   if (focus) {
     // preventScroll: the block above already positions the viewport; focus()'s
     // own default scroll-into-view would otherwise cancel that smooth scroll.
-    (stepContainer.querySelector('h2, .card-step h5') as HTMLElement | null)?.focus({ preventScroll: true });
-  }
-
-  const tipBtn = $('#step-container .step-link-btn');
-  const bootstrap = (window as any).bootstrap;
-  if (tipBtn && bootstrap?.Tooltip) {
-    new bootstrap.Tooltip(tipBtn);
-  }
-  if (hasURL && tipBtn) {
-    tipBtn.addEventListener('click', () => {
-      window.open(extURL, '_blank', 'noopener');
-    });
+    // Falls back to the card itself for steps with no heading (start).
+    const focusTarget = (stepContainer.querySelector('h2') as HTMLElement | null)
+      ?? (stepContainer.querySelector('.card-step') as HTMLElement | null);
+    focusTarget?.focus({ preventScroll: true });
   }
 
   $$('#step-container [data-next]').forEach((b) =>
@@ -184,6 +204,7 @@ function renderStep(focus = true) {
     el.addEventListener('click', () => openPopup(el.getAttribute('data-popup')))
   );
   enhanceExternalLinks(stepContainer);
+  enhancePopupTriggers(stepContainer);
 }
 
 function openPopup(key: string | null) {
@@ -246,24 +267,27 @@ function announce(text: string) {
 
 function renderAudit() {
   const audit = $('#audit-render');
-  if (audit) {
-    audit.innerHTML = !state.audit.length
-      ? "<p class='muted mb-0'>Your answers appear here as you work through the pathway. You can copy the summary into your notes at the end.</p>"
-      : '<ol class="pathway-log list-unstyled mb-0" aria-label="Pathway log">' +
-        state.audit
-          .map((e, j) => {
-            const i = transitionForEntry(j);
-            const inner =
-              `${e.question ? `<div class='muted'>${e.question}</div>` : ''}<div>${e.statement}</div>`;
-            return i < 0
-              ? `<li>${inner}</li>`
-              : `<li><button type="button" class="log-entry" data-rewind="${i}">${inner}</button></li>`;
-          })
-          .join('') +
-        '</ol>';
-  }
+  if (!audit) return;
+  // Disable before the early return so an empty log always disables both
+  // sidebar buttons, not just whichever one happens to run after it.
   const empty = state.audit.length === 0;
   $$('#log-actions button').forEach((b) => ((b as HTMLButtonElement).disabled = empty));
+  if (empty) {
+    audit.innerHTML = "<p class='muted mb-0'>Your answers appear here as you work through the pathway. You can copy the summary into your notes at the end.</p>";
+    return;
+  }
+  audit.innerHTML = '<ol class="pathway-log list-unstyled mb-0" aria-label="Pathway log">' +
+    state.audit
+      .map((e, j) => {
+        const i = transitionForEntry(j);
+        const inner =
+          `${e.question ? `<div class='muted'>${e.question}</div>` : ''}<div>${e.statement}</div>`;
+        return i < 0
+          ? `<li>${inner}</li>`
+          : `<li><button type="button" class="log-entry" data-rewind="${i}">${inner}</button></li>`;
+      })
+      .join('') +
+    '</ol>';
 }
 
 function buildSummary() {
@@ -318,6 +342,21 @@ export function init() {
     const { version, lastReviewed, approvedBy } = RULES.meta;
     printMeta.textContent = `SWAPYT decision support ${version} · last reviewed ${lastReviewed} · ${approvedBy}`;
   }
+
+  const provenance = $('#provenance-line');
+  if (provenance) {
+    const { version, lastReviewed, approvedBy } = RULES.meta;
+    provenance.textContent = `Decision support system · ${version} · reviewed ${formatReviewDate(lastReviewed)} · ${approvedBy}`;
+  }
+  const betaPill = $('#beta-pill') as HTMLElement | null;
+  if (betaPill) betaPill.style.display = isEndorsed(RULES.meta.approvedBy) ? 'none' : '';
+
+  $('#btn-support')?.addEventListener('click', () => {
+    const extURL = RULES.resources.stepExternal[state.currentId];
+    if (extURL && typeof extURL === 'string' && extURL.trim() && extURL !== '#') {
+      window.open(extURL, '_blank', 'noopener');
+    }
+  });
 
   $('#btn-copy-log')?.addEventListener('click', (e) => copySummary(e.currentTarget as HTMLElement));
   $('#btn-print-log')?.addEventListener('click', () => window.print());
